@@ -324,9 +324,10 @@ document.getElementById('song-search-input').addEventListener('input', (e) => {
                         await supabase.from('memories').insert([{ title: titleKey, description: songData, image_url: '' }]);
                     }
 
-                    // Also save a history record using just the song name (readable)
+                    // Also save a history record as JSON (includes preview for hover-play)
                     const histKey = editingSongFor === 'husaina' ? '__HIST_HUSAINA__' : '__HIST_MOHAMMED__';
-                    await supabase.from('memories').insert([{ title: histKey, description: songName, image_url: '' }]);
+                    const histData = JSON.stringify({ name: songName, preview: track.previewUrl || null });
+                    await supabase.from('memories').insert([{ title: histKey, description: histData, image_url: '' }]);
 
                     // Close modal and refresh
                     document.getElementById('song-modal-overlay').style.display = 'none';
@@ -515,6 +516,15 @@ async function fetchSongHistory() {
 
     if (error || !data) return;
 
+    // Shared audio element for history hover-play
+    let historyAudio = document.getElementById('history-audio-player');
+    if (!historyAudio) {
+        historyAudio = document.createElement('audio');
+        historyAudio.id = 'history-audio-player';
+        historyAudio.preload = 'none';
+        document.body.appendChild(historyAudio);
+    }
+
     function renderHistory(listEl, items) {
         listEl.innerHTML = '';
         if (items.length === 0) {
@@ -525,12 +535,36 @@ async function fetchSongHistory() {
             const date = new Date(item.created_at).toLocaleDateString('en-GB', {
                 day: 'numeric', month: 'short', year: 'numeric'
             });
-            const query = encodeURIComponent(item.description);
+
+            // Parse JSON or fall back to plain text
+            let name = item.description;
+            let previewUrl = null;
+            try {
+                const parsed = JSON.parse(item.description);
+                name = parsed.name || name;
+                previewUrl = parsed.preview || null;
+            } catch(e) { /* old plain-text record, no preview */ }
+
+            const query = encodeURIComponent(name);
             const li = document.createElement('li');
+            li.style.cursor = previewUrl ? 'pointer' : 'default';
             li.innerHTML = `
-                <a href="https://open.spotify.com/search/${query}" target="_blank">${item.description}</a>
-                <span>${date}</span>
+                <a href="https://open.spotify.com/search/${query}" target="_blank">${name}</a>
+                <span>${date}${previewUrl ? ' 🎵' : ''}</span>
             `;
+
+            // Hover to preview
+            if (previewUrl) {
+                li.addEventListener('mouseenter', () => {
+                    historyAudio.src = previewUrl;
+                    historyAudio.play();
+                });
+                li.addEventListener('mouseleave', () => {
+                    historyAudio.pause();
+                    historyAudio.src = '';
+                });
+            }
+
             listEl.appendChild(li);
         });
     }
