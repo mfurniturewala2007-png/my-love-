@@ -76,17 +76,20 @@ async function fetchMemories() {
     if (songMemory && songMemory.description) {
         const query = encodeURIComponent(songMemory.description);
         songLinkEl.textContent = songMemory.description;
-        // Try to open Spotify app first, fall back to web player search
         songLinkEl.href = `https://open.spotify.com/search/${query}`;
+        songLinkEl.target = '_blank';
         songLinkEl.onclick = (e) => {
             e.preventDefault();
-            // Attempt native Spotify app deep link
             const appLink = `spotify:search:${songMemory.description}`;
             const webLink = `https://open.spotify.com/search/${query}`;
-            // Open app link; if Spotify not installed, browser will fall back
-            window.location = appLink;
-            // After short delay, open web fallback in new tab if app didn't open
-            setTimeout(() => { window.open(webLink, '_blank'); }, 1000);
+            // Use hidden iframe to attempt opening Spotify app without navigating away
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = appLink;
+            document.body.appendChild(iframe);
+            setTimeout(() => document.body.removeChild(iframe), 2000);
+            // Always open Spotify web search in a new tab as well
+            window.open(webLink, '_blank');
         };
         window.currentSongId = songMemory.id;
     } else {
