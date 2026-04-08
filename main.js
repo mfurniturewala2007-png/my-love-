@@ -118,9 +118,10 @@ async function fetchMemories() {
                     playBtn.textContent = '▶';
                 }
 
-                // Hover to play (desktop)
+                // Hover to play — desktop only (not on touch/mobile devices)
+                const isTouch = window.matchMedia('(hover: none)').matches;
                 const songCard = playerEl.closest('.song-card');
-                if (songCard) {
+                if (songCard && !isTouch) {
                     songCard.addEventListener('mouseenter', playAudio);
                     songCard.addEventListener('mouseleave', pauseAudio);
                 }
@@ -574,8 +575,8 @@ async function fetchSongHistory() {
             li.appendChild(infoDiv);
             li.appendChild(delBtn);
 
-            // Hover to preview
-            if (previewUrl) {
+            // Hover to preview — desktop only
+            if (previewUrl && !window.matchMedia('(hover: none)').matches) {
                 li.addEventListener('mouseenter', () => {
                     historyAudio.src = previewUrl;
                     historyAudio.play();
