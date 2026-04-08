@@ -103,7 +103,6 @@ async function fetchMemories() {
                 audioEl.src = previewUrl;
                 playerEl.style.display = 'flex';
 
-                // Play/pause helper
                 function playAudio() {
                     document.querySelectorAll('.mini-player audio').forEach(a => a.pause());
                     document.querySelectorAll('.mini-player-art').forEach(a => a.classList.remove('playing'));
@@ -118,15 +117,7 @@ async function fetchMemories() {
                     playBtn.textContent = '▶';
                 }
 
-                // Hover to play — desktop only (not on touch/mobile devices)
-                const isTouch = window.matchMedia('(hover: none)').matches;
-                const songCard = playerEl.closest('.song-card');
-                if (songCard && !isTouch) {
-                    songCard.addEventListener('mouseenter', playAudio);
-                    songCard.addEventListener('mouseleave', pauseAudio);
-                }
-
-                // Click button for mobile
+                // Button only — no hover auto-play on any device
                 playBtn.onclick = () => {
                     if (audioEl.paused) { playAudio(); } else { pauseAudio(); }
                 };
@@ -526,6 +517,9 @@ async function fetchSongHistory() {
         document.body.appendChild(historyAudio);
     }
 
+    // Track which URL is currently playing in history
+    let currentHistUrl = null;
+
     function renderHistory(listEl, items) {
         listEl.innerHTML = '';
         if (items.length === 0) {
@@ -568,21 +562,31 @@ async function fetchSongHistory() {
                 playBtn.textContent = '▶';
                 playBtn.title = 'Preview';
                 playBtn.style.cssText = 'background:var(--dark-rose);border:none;color:white;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:0.7rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;';
+                playBtn.classList.add('hist-play-btn');
+
                 playBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const isPlaying = historyAudio.src.includes(encodeURIComponent(previewUrl)) || historyAudio.src === previewUrl;
-                    // Stop all history playback and reset all play buttons
+                    const thisIsPlaying = currentHistUrl === previewUrl && !historyAudio.paused;
+
+                    // Always stop + reset everything first
                     historyAudio.pause();
                     historyAudio.src = '';
+                    currentHistUrl = null;
                     document.querySelectorAll('.hist-play-btn').forEach(b => b.textContent = '▶');
-                    if (!isPlaying || historyAudio.paused) {
+
+                    if (!thisIsPlaying) {
+                        // Start playing this one
+                        currentHistUrl = previewUrl;
                         historyAudio.src = previewUrl;
                         historyAudio.play();
                         playBtn.textContent = '⏸';
-                        historyAudio.onended = () => { playBtn.textContent = '▶'; };
+                        historyAudio.onended = () => {
+                            playBtn.textContent = '▶';
+                            currentHistUrl = null;
+                        };
                     }
                 });
-                playBtn.classList.add('hist-play-btn');
+
                 btnGroup.appendChild(playBtn);
             }
 
@@ -595,6 +599,12 @@ async function fetchSongHistory() {
             delBtn.addEventListener('mouseleave', () => delBtn.style.color = '#ccc');
             delBtn.addEventListener('click', async (e) => {
                 e.stopPropagation();
+                // Stop audio if this item is currently playing
+                if (previewUrl && currentHistUrl === previewUrl) {
+                    historyAudio.pause();
+                    historyAudio.src = '';
+                    currentHistUrl = null;
+                }
                 await supabase.from('memories').delete().eq('id', item.id);
                 li.remove();
             });
