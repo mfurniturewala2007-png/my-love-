@@ -264,6 +264,12 @@ document.getElementById('btn-song-cancel').addEventListener('click', () => {
 
 // Live search using iTunes Search API (free, no API key needed)
 let searchTimeout = null;
+
+// Block Enter key — user must click a result to select it
+document.getElementById('song-search-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') e.preventDefault();
+});
+
 document.getElementById('song-search-input').addEventListener('input', (e) => {
     clearTimeout(searchTimeout);
     const query = e.target.value.trim();
@@ -326,9 +332,7 @@ document.getElementById('song-search-input').addEventListener('input', (e) => {
                     document.getElementById('song-modal-overlay').style.display = 'none';
                     fetchMemories();
                     fetchSongHistory();
-
-                    // Open Spotify in new tab
-                    window.open(spotifyUrl, '_blank');
+                    // Spotify does NOT auto-open — user can click the song name on the page to go there
                 });
                 resultsEl.appendChild(item);
             });
