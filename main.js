@@ -103,21 +103,33 @@ async function fetchMemories() {
                 audioEl.src = previewUrl;
                 playerEl.style.display = 'flex';
 
-                playBtn.onclick = () => {
-                    const isPlaying = !audioEl.paused;
-                    // Pause all other audio first
-                    document.querySelectorAll('.mini-player audio').forEach(a => { a.pause(); });
+                // Play/pause helper
+                function playAudio() {
+                    document.querySelectorAll('.mini-player audio').forEach(a => a.pause());
                     document.querySelectorAll('.mini-player-art').forEach(a => a.classList.remove('playing'));
                     document.querySelectorAll('.mini-play-btn').forEach(b => b.textContent = '▶');
+                    audioEl.play();
+                    artEl.classList.add('playing');
+                    playBtn.textContent = '⏸';
+                }
+                function pauseAudio() {
+                    audioEl.pause();
+                    artEl.classList.remove('playing');
+                    playBtn.textContent = '▶';
+                }
 
-                    if (isPlaying) {
-                        audioEl.pause();
-                    } else {
-                        audioEl.play();
-                        artEl.classList.add('playing');
-                        playBtn.textContent = '⏸';
-                    }
+                // Hover to play (desktop)
+                const songCard = playerEl.closest('.song-card');
+                if (songCard) {
+                    songCard.addEventListener('mouseenter', playAudio);
+                    songCard.addEventListener('mouseleave', pauseAudio);
+                }
+
+                // Click button for mobile
+                playBtn.onclick = () => {
+                    if (audioEl.paused) { playAudio(); } else { pauseAudio(); }
                 };
+
                 audioEl.onended = () => {
                     artEl.classList.remove('playing');
                     playBtn.textContent = '▶';
