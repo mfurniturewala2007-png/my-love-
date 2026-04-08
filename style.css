@@ -837,12 +837,13 @@ footer {
     }
 
     /* --- Gallery --- */
+    /* --- Mobile Optimized Gallery (360px - 430px) --- */
     .gallery-container {
-        padding: 1rem 1rem 6rem;
+        padding: 1rem 0.5rem 6rem;
     }
     .photo-grid {
         grid-template-columns: 1fr;
-        gap: 3rem;
+        gap: 2.5rem;
         padding: 0;
     }
     .photo-card.landscape {
@@ -859,17 +860,23 @@ footer {
         resize: none;
         min-height: unset;
         height: auto;
+        border-radius: 12px; /* Smaller radius on mobile saves corner image data */
+        margin-bottom: 0.8rem;
     }
     .img-wrapper img {
         height: auto;
         min-height: unset;
-        object-fit: contain;
+        width: 100%;
+        border-radius: 12px;
+        object-fit: contain; /* Guarantee no clipping on sides/top */
     }
     .photo-card-heading {
-        font-size: 1.7rem;
+        font-size: 1.6rem;
+        margin-bottom: 0.6rem;
     }
     .photo-caption {
-        font-size: 1rem;
+        font-size: 1.05rem;
+        padding: 0 0.5rem;
     }
 
     /* --- Admin --- */
