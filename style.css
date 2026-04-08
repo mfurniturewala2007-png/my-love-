@@ -52,15 +52,30 @@ body {
     100% { transform: translateY(110vh) rotate(-15deg); opacity: 0; }
 }
 
+@keyframes popIn {
+    0% { opacity: 0; transform: scale(0.8) translateY(80px); }
+    60% { opacity: 1; transform: scale(1.05) translateY(-15px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes swoopIn {
+    0% { opacity: 0; transform: translateX(-100px) rotate(-5deg); }
+    70% { transform: translateX(15px) rotate(2deg); opacity: 1;}
+    100% { transform: translateX(0) rotate(0); opacity: 1;}
+}
+
+@keyframes dropIn {
+    0% { opacity: 0; transform: translateY(-100px) scale(1.2); }
+    50% { transform: translateY(10px) scale(0.95); opacity: 1; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
 .reveal {
     opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 1.2s ease-out, transform 1.2s ease-out;
 }
 
 .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
+    animation: popIn 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .hero {
@@ -96,13 +111,17 @@ body {
     line-height: 1.2;
     margin-bottom: 1.5rem;
     text-shadow: 1px 1px 4px rgba(212, 175, 55, 0.15);
+    opacity: 0;
+    animation: dropIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .hero p.quote {
     font-size: 1.5rem;
     color: var(--dark-rose);
     max-width: 600px;
-    opacity: 0.9;
+    opacity: 0;
+    animation: swoopIn 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation-delay: 0.3s;
 }
 
 .timer-section {
@@ -175,6 +194,16 @@ body {
     border: none;
     box-shadow: none;
     position: relative;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+    border-radius: 30px;
+}
+
+.photo-card:hover {
+    transform: scale(1.08) translateY(-15px);
+    box-shadow: 0 30px 60px rgba(138, 90, 95, 0.25);
+    z-index: 10;
+    background: white;
+    padding: 1rem;
 }
 
 .photo-card.landscape {
@@ -196,8 +225,10 @@ body {
     background: transparent;
     display: block;
     position: relative;
-    cursor: zoom-in;
     overflow: hidden;
+    resize: both;
+    min-width: 50%;
+    min-height: 150px;
 }
 
 .img-wrapper img {
@@ -205,11 +236,11 @@ body {
     height: auto;
     display: block;
     border-radius: 30px;
-    transition: transform 0.6s ease;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .photo-card:hover .img-wrapper img {
-    transform: scale(1.05);
+    transform: scale(1.15) rotate(2deg);
 }
 
 .photo-caption {

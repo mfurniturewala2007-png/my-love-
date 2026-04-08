@@ -77,7 +77,7 @@ async function fetchMemories() {
             <button class="card-delete-btn" onclick="deleteMemory('${memory.id}', '${memory.image_url}')">Delete</button>
             <button class="card-edit-btn" onclick="openEditModal('${memory.id}', '${escapeHtml(memory.title)}', '${escapeHtml(memory.description)}')">Edit</button>
             ${memory.title ? `<h3 class="photo-card-heading brand-font">${escapeHtml(memory.title)}</h3>` : ''}
-            <div class="img-wrapper" onclick="openLightbox('${memory.image_url}')">
+            <div class="img-wrapper">
                 <img src="${memory.image_url}" alt="Memory">
             </div>
             <p class="photo-caption">${escapeHtml(memory.description)}</p>
