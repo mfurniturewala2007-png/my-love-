@@ -254,9 +254,14 @@ document.getElementById('song-search-input').addEventListener('input', (e) => {
                         await supabase.from('memories').insert([{ title: titleKey, description: songLabel, image_url: '' }]);
                     }
 
+                    // Also save a history record (separate insert, always)
+                    const histKey = editingSongFor === 'husaina' ? '__HIST_HUSAINA__' : '__HIST_MOHAMMED__';
+                    await supabase.from('memories').insert([{ title: histKey, description: songLabel, image_url: '' }]);
+
                     // Close modal and refresh
                     document.getElementById('song-modal-overlay').style.display = 'none';
                     fetchMemories();
+                    fetchSongHistory();
 
                     // Open Spotify in new tab
                     window.open(spotifyUrl, '_blank');
@@ -428,3 +433,52 @@ function initAnimations() {
 // Start everything up safely
 initAnimations();
 fetchMemories();
+fetchSongHistory();
+
+// ==========================================
+// 5. SONG HISTORY
+// ==========================================
+async function fetchSongHistory() {
+    const { data, error } = await supabase
+        .from('memories')
+        .select('*')
+        .in('title', ['__HIST_MOHAMMED__', '__HIST_HUSAINA__'])
+        .order('created_at', { ascending: false });
+
+    if (error || !data) return;
+
+    function renderHistory(listEl, items) {
+        listEl.innerHTML = '';
+        if (items.length === 0) {
+            listEl.innerHTML = '<li style="color:#aaa">No history yet</li>';
+            return;
+        }
+        items.forEach(item => {
+            const date = new Date(item.created_at).toLocaleDateString('en-GB', {
+                day: 'numeric', month: 'short', year: 'numeric'
+            });
+            const query = encodeURIComponent(item.description);
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <a href="https://open.spotify.com/search/${query}" target="_blank">${item.description}</a>
+                <span>${date}</span>
+            `;
+            listEl.appendChild(li);
+        });
+    }
+
+    const mohammedHistory = data.filter(m => m.title === '__HIST_MOHAMMED__');
+    const husainaHistory  = data.filter(m => m.title === '__HIST_HUSAINA__');
+
+    renderHistory(document.getElementById('song-history-mohammed'), mohammedHistory);
+    renderHistory(document.getElementById('song-history-husaina'),  husainaHistory);
+}
+
+// Toggle History panel
+document.getElementById('btn-song-history').addEventListener('click', () => {
+    const panel = document.getElementById('song-history-panel');
+    const btn   = document.getElementById('btn-song-history');
+    const isHidden = panel.style.display === 'none';
+    panel.style.display = isHidden ? 'block' : 'none';
+    btn.textContent = isHidden ? '📖 Hide Song History' : '📖 View Song History';
+});
