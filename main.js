@@ -548,10 +548,31 @@ async function fetchSongHistory() {
             const query = encodeURIComponent(name);
             const li = document.createElement('li');
             li.style.cursor = previewUrl ? 'pointer' : 'default';
-            li.innerHTML = `
+            li.style.display = 'flex';
+            li.style.alignItems = 'center';
+            li.style.justifyContent = 'space-between';
+            li.style.gap = '0.5rem';
+
+            const infoDiv = document.createElement('div');
+            infoDiv.innerHTML = `
                 <a href="https://open.spotify.com/search/${query}" target="_blank">${name}</a>
                 <span>${date}${previewUrl ? ' 🎵' : ''}</span>
             `;
+
+            const delBtn = document.createElement('button');
+            delBtn.textContent = '✕';
+            delBtn.title = 'Delete from history';
+            delBtn.style.cssText = 'background:none;border:none;color:#ccc;cursor:pointer;font-size:0.9rem;padding:0 4px;flex-shrink:0;transition:color 0.2s;';
+            delBtn.addEventListener('mouseenter', () => delBtn.style.color = '#e74c3c');
+            delBtn.addEventListener('mouseleave', () => delBtn.style.color = '#ccc');
+            delBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                await supabase.from('memories').delete().eq('id', item.id);
+                li.remove();
+            });
+
+            li.appendChild(infoDiv);
+            li.appendChild(delBtn);
 
             // Hover to preview
             if (previewUrl) {
