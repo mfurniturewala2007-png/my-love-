@@ -219,6 +219,55 @@ body {
     color: #1DB954;
 }
 
+#song-search-results {
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 0.5rem 0 1rem;
+    border-radius: 12px;
+}
+
+.song-result-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border-bottom: 1px solid rgba(138, 90, 95, 0.1);
+}
+
+.song-result-item:hover {
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.song-result-item img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.song-result-info strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--dark-rose);
+    font-weight: 700;
+}
+
+.song-result-info span {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.song-searching {
+    text-align: center;
+    padding: 1rem;
+    color: var(--gold);
+    font-size: 0.9rem;
+}
+
 /* --- Gallery --- */
 .gallery-container {
     padding: 2rem 1rem 8rem;

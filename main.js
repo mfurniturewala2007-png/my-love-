@@ -78,23 +78,12 @@ async function fetchMemories() {
         songLinkEl.textContent = songMemory.description;
         songLinkEl.href = `https://open.spotify.com/search/${query}`;
         songLinkEl.target = '_blank';
-        songLinkEl.onclick = (e) => {
-            e.preventDefault();
-            const appLink = `spotify:search:${songMemory.description}`;
-            const webLink = `https://open.spotify.com/search/${query}`;
-            // Use hidden iframe to attempt opening Spotify app without navigating away
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = appLink;
-            document.body.appendChild(iframe);
-            setTimeout(() => document.body.removeChild(iframe), 2000);
-            // Always open Spotify web search in a new tab as well
-            window.open(webLink, '_blank');
-        };
+        songLinkEl.onclick = null;
         window.currentSongId = songMemory.id;
     } else {
-        songLinkEl.textContent = "Tap to add a favourite song!";
-        songLinkEl.href = "javascript:void(0)";
+        songLinkEl.textContent = 'No song set yet ♪';
+        songLinkEl.href = 'javascript:void(0)';
+        songLinkEl.target = '';
         songLinkEl.onclick = null;
     }
 
@@ -189,17 +178,77 @@ document.getElementById('btn-add-memory').addEventListener('click', () => {
     modalOverlay.style.display = 'flex';
 });
 
-document.getElementById('btn-edit-song').addEventListener('click', async () => {
-    const newSong = prompt("Enter your new favourite song (e.g. 'Perfect Ed Sheeran'):");
-    if (!newSong) return;
+document.getElementById('btn-edit-song').addEventListener('click', () => {
+    document.getElementById('song-modal-overlay').style.display = 'flex';
+    document.getElementById('song-search-input').value = '';
+    document.getElementById('song-search-results').innerHTML = '';
+    setTimeout(() => document.getElementById('song-search-input').focus(), 100);
+});
 
-    if (window.currentSongId) {
-        await supabase.from('memories').update({ description: newSong }).eq('id', window.currentSongId);
-    } else {
-        await supabase.from('memories').insert([{ title: '__FAV_SONG__', description: newSong, image_url: '' }]);
+document.getElementById('btn-song-cancel').addEventListener('click', () => {
+    document.getElementById('song-modal-overlay').style.display = 'none';
+});
+
+// Live search using iTunes Search API (free, no API key needed)
+let searchTimeout = null;
+document.getElementById('song-search-input').addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    const query = e.target.value.trim();
+    const resultsEl = document.getElementById('song-search-results');
+
+    if (query.length < 2) {
+        resultsEl.innerHTML = '';
+        return;
     }
-    
-    fetchMemories();
+
+    resultsEl.innerHTML = '<p class="song-searching">Searching...</p>';
+
+    searchTimeout = setTimeout(async () => {
+        try {
+            const response = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&limit=8`);
+            const json = await response.json();
+            
+            if (!json.results || json.results.length === 0) {
+                resultsEl.innerHTML = '<p class="song-searching">No songs found. Try a different name.</p>';
+                return;
+            }
+
+            resultsEl.innerHTML = '';
+            json.results.forEach(track => {
+                const item = document.createElement('div');
+                item.className = 'song-result-item';
+                item.innerHTML = `
+                    <img src="${track.artworkUrl100}" alt="Album art">
+                    <div class="song-result-info">
+                        <strong>${track.trackName}</strong>
+                        <span>${track.artistName}</span>
+                    </div>
+                `;
+                item.addEventListener('click', async () => {
+                    const songLabel = `${track.trackName} — ${track.artistName}`;
+                    const spotifyQuery = encodeURIComponent(`${track.trackName} ${track.artistName}`);
+                    const spotifyUrl = `https://open.spotify.com/search/${spotifyQuery}`;
+
+                    // Save to database
+                    if (window.currentSongId) {
+                        await supabase.from('memories').update({ description: songLabel }).eq('id', window.currentSongId);
+                    } else {
+                        await supabase.from('memories').insert([{ title: '__FAV_SONG__', description: songLabel, image_url: '' }]);
+                    }
+
+                    // Close modal and refresh
+                    document.getElementById('song-modal-overlay').style.display = 'none';
+                    fetchMemories();
+
+                    // Open Spotify in new tab
+                    window.open(spotifyUrl, '_blank');
+                });
+                resultsEl.appendChild(item);
+            });
+        } catch (err) {
+            resultsEl.innerHTML = '<p class="song-searching">Error searching. Check your connection.</p>';
+        }
+    }, 500);
 });
 
 // Since we are in a module, we attach it to window so inline onclick can see it

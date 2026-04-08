@@ -114,6 +114,21 @@
         </div>
     </div>
 
+    <!-- Song Search Modal -->
+    <div class="modal-overlay" id="song-modal-overlay">
+        <div class="modal" id="song-modal">
+            <h2 class="brand-font">🎵 Find a Song</h2>
+            <div class="form-group">
+                <label>Search for a song or artist</label>
+                <input type="text" id="song-search-input" placeholder="e.g. Perfect Ed Sheeran" autocomplete="off">
+            </div>
+            <div id="song-search-results"></div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" id="btn-song-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Load main script using Vite module entrypoint -->
     <script type="module" src="/main.js"></script>
 </body>
