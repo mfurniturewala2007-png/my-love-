@@ -83,6 +83,14 @@ async function fetchMemories() {
             <p class="photo-caption">${escapeHtml(memory.description)}</p>
         `;
         
+         // Detect shape of image to span 2 columns if landscape
+         const img = card.querySelector('img');
+         img.onload = () => {
+             if (img.naturalWidth > img.naturalHeight) {
+                 card.classList.add('landscape');
+             }
+         };
+
          grid.appendChild(card);
     });
 

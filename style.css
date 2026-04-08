@@ -203,7 +203,10 @@ body {
     box-shadow: 0 30px 60px rgba(138, 90, 95, 0.25);
     z-index: 10;
     background: white;
-    padding: 1rem;
+}
+
+.photo-card.landscape {
+    grid-column: span 2;
 }
 
 .sortable-ghost {
@@ -231,7 +234,8 @@ body {
     display: block;
     position: relative;
     overflow: hidden;
-    aspect-ratio: 4 / 5;
+    resize: vertical;
+    min-height: 250px;
 }
 
 .img-wrapper img {
@@ -481,6 +485,10 @@ footer {
         grid-template-columns: 1fr;
         gap: 4rem;
         padding: 0 1rem;
+    }
+    
+    .photo-card.landscape {
+        grid-column: span 1;
     }
     .timer-section h2 {
         font-size: 1.8rem;
