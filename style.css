@@ -863,6 +863,7 @@ footer {
     .img-wrapper img {
         height: auto;
         min-height: unset;
+        object-fit: contain;
     }
     .photo-card-heading {
         font-size: 1.7rem;
