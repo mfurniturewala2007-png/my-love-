@@ -5,10 +5,15 @@
     --gold: #d4af37;
 }
 
-* {
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+html {
+    overflow-x: hidden;
+    width: 100%;
 }
 
 body {
@@ -16,6 +21,8 @@ body {
     background-color: var(--cream);
     color: var(--dark-rose);
     overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
     line-height: 1.6;
     position: relative;
 }
@@ -447,6 +454,7 @@ body {
     grid-template-columns: repeat(2, 1fr);
     gap: 5rem 3rem;
     max-width: 1000px;
+    width: 100%;
     margin: 0 auto;
 }
 
@@ -493,6 +501,7 @@ body {
 
 .img-wrapper {
     width: 100%;
+    max-width: 100%;
     border-radius: 30px;
     margin-bottom: 1.2rem;
     box-shadow: 0 10px 30px rgba(138, 90, 95, 0.15);
@@ -506,6 +515,7 @@ body {
 
 .img-wrapper img {
     width: 100%;
+    max-width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
@@ -741,84 +751,166 @@ footer {
 }
 
 @media (max-width: 768px) {
+    /* --- Base Layout --- */
     .hero {
-        padding: 1rem;
+        padding: 2rem 1.2rem;
+        min-height: 100svh;
     }
     .hero h1 {
-        margin-bottom: 1rem;
+        margin-bottom: 0.8rem;
     }
     .hero p.quote {
-        font-size: 1.2rem;
-        padding: 0 10px;
+        font-size: 1.15rem;
+        padding: 0 8px;
+    }
+
+    /* --- Timer --- */
+    .timer-section {
+        padding: 1.5rem 1rem 3rem;
+    }
+    .timer-section h2 {
+        font-size: 1.7rem;
+        margin-bottom: 1.2rem;
+    }
+    .counter {
+        gap: 0.7rem;
+    }
+    .time-box {
+        min-width: 0;
+        flex: 1 1 28%;
+        padding: 0.9rem 0.5rem;
+    }
+    .time-box span {
+        font-size: 1.7rem;
+    }
+    .time-box p {
+        font-size: 0.75rem;
+        letter-spacing: 0;
+    }
+
+    /* --- Song Section --- */
+    .song-section {
+        padding: 1.5rem 1rem 3rem;
+    }
+    .song-section h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1.2rem;
     }
     .song-cards {
+        flex-direction: column;
+        align-items: center;
         gap: 1.5rem;
         width: 100%;
     }
     .song-card {
         width: 100%;
+        max-width: 380px;
     }
     .song-box {
-        width: 95%;
-        margin: 0 auto;
+        width: 100%;
         padding: 0.8rem 1rem;
+        gap: 0.6rem;
     }
     .song-link {
-        max-width: 180px;
+        font-size: 0.95rem;
+        max-width: calc(100% - 100px);
+    }
+    .mini-player {
+        width: 100%;
+        max-width: 380px;
+        padding: 0.5rem 1rem 0.5rem 0.5rem;
+    }
+
+    /* --- Song History --- */
+    .song-history-columns {
+        flex-direction: column;
+        gap: 1.2rem;
+    }
+    .song-history-panel {
+        padding: 0 0.5rem;
+    }
+    .song-history-toggle {
+        font-size: 0.9rem;
+        padding: 0.5rem 1.2rem;
+    }
+
+    /* --- Gallery --- */
+    .gallery-container {
+        padding: 1rem 1rem 6rem;
     }
     .photo-grid {
         grid-template-columns: 1fr;
         gap: 3rem;
-        padding: 0 1rem;
+        padding: 0;
     }
     .photo-card.landscape {
         grid-column: span 1;
     }
-    .timer-section h2 {
-        font-size: 1.8rem;
+    .photo-card {
+        padding: 0 0.5rem;
     }
-    .time-box {
-        min-width: 70px;
-        padding: 0.8rem;
-        flex: 1 1 70px;
+    .photo-card:hover {
+        transform: none;
+        box-shadow: none;
     }
-    .time-box span {
-        font-size: 1.8rem;
-    }
-    .song-history-columns {
-        flex-direction: column;
-        gap: 1.5rem;
-    }
-    .song-history-panel {
-        padding: 0 1rem;
+    .photo-card:hover .img-wrapper img {
+        transform: none;
     }
     .img-wrapper {
-        resize: none; /* Disable manual resize on mobile */
+        resize: none;
         min-height: auto;
+        border-radius: 20px;
+    }
+    .img-wrapper img {
+        border-radius: 20px;
     }
     .photo-card-heading {
-        font-size: 1.8rem;
+        font-size: 1.7rem;
+    }
+    .photo-caption {
+        font-size: 1rem;
+    }
+
+    /* --- Admin --- */
+    .admin-controls {
+        bottom: 1rem;
+        right: 1rem;
+    }
+    .btn {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.9rem;
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 420px) {
     .hero h1 {
         font-size: 2.2rem;
     }
     .hero p.quote {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
     .song-person-label {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
     }
     .song-link {
-        font-size: 1rem;
-        max-width: 150px;
+        font-size: 0.88rem;
+        max-width: calc(100% - 90px);
+    }
+    .spotify-icon {
+        width: 22px;
+        height: 22px;
     }
     .modal {
         padding: 1.5rem 1rem;
+        border-radius: 16px;
     }
     .modal h2 {
-        font-size: 2rem;
+        font-size: 1.8rem;
+    }
+    .song-section h2 {
+        font-size: 1.6rem;
+    }
+    .time-box span {
+        font-size: 1.5rem;
     }
 }
