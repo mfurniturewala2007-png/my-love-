@@ -72,13 +72,27 @@ async function fetchMemories() {
 
     // Separate the special song memory
     const songMemory = data.find(m => m.title === '__FAV_SONG__');
+    const songLinkEl = document.getElementById('song-link');
     if (songMemory && songMemory.description) {
-        document.getElementById('song-link').textContent = songMemory.description;
-        document.getElementById('song-link').href = `https://open.spotify.com/search/${encodeURIComponent(songMemory.description)}`;
+        const query = encodeURIComponent(songMemory.description);
+        songLinkEl.textContent = songMemory.description;
+        // Try to open Spotify app first, fall back to web player search
+        songLinkEl.href = `https://open.spotify.com/search/${query}`;
+        songLinkEl.onclick = (e) => {
+            e.preventDefault();
+            // Attempt native Spotify app deep link
+            const appLink = `spotify:search:${songMemory.description}`;
+            const webLink = `https://open.spotify.com/search/${query}`;
+            // Open app link; if Spotify not installed, browser will fall back
+            window.location = appLink;
+            // After short delay, open web fallback in new tab if app didn't open
+            setTimeout(() => { window.open(webLink, '_blank'); }, 1000);
+        };
         window.currentSongId = songMemory.id;
     } else {
-        document.getElementById('song-link').textContent = "Pick a song!";
-        document.getElementById('song-link').href = "#";
+        songLinkEl.textContent = "Tap to add a favourite song!";
+        songLinkEl.href = "javascript:void(0)";
+        songLinkEl.onclick = null;
     }
 
     const regularMemories = data.filter(m => m.title !== '__FAV_SONG__');
