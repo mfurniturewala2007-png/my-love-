@@ -70,26 +70,32 @@ async function fetchMemories() {
         return;
     }
 
-    // Separate the special song memory
-    const songMemory = data.find(m => m.title === '__FAV_SONG__');
-    const songLinkEl = document.getElementById('song-link');
-    if (songMemory && songMemory.description) {
-        const query = encodeURIComponent(songMemory.description);
-        songLinkEl.textContent = songMemory.description;
-        songLinkEl.href = `https://open.spotify.com/search/${query}`;
-        songLinkEl.target = '_blank';
-        songLinkEl.onclick = null;
-        window.currentSongId = songMemory.id;
-    } else {
-        songLinkEl.textContent = 'No song set yet ♪';
-        songLinkEl.removeAttribute('href');
-        songLinkEl.target = '';
-        songLinkEl.onclick = null;
-        songLinkEl.style.cursor = 'default';
-        songLinkEl.style.color = '#aaa';
+    // Helper to update a song link element
+    function setSongLink(el, songMemory, idKey) {
+        if (songMemory && songMemory.description) {
+            const query = encodeURIComponent(songMemory.description);
+            el.textContent = songMemory.description;
+            el.href = `https://open.spotify.com/search/${query}`;
+            el.target = '_blank';
+            el.style.cursor = 'pointer';
+            el.style.color = '';
+            window[idKey] = songMemory.id;
+        } else {
+            el.textContent = 'No song set yet ♪';
+            el.removeAttribute('href');
+            el.target = '';
+            el.style.cursor = 'default';
+            el.style.color = '#aaa';
+        }
     }
 
-    const regularMemories = data.filter(m => m.title !== '__FAV_SONG__');
+    const mohammedSong = data.find(m => m.title === '__SONG_MOHAMMED__');
+    const husainaSong  = data.find(m => m.title === '__SONG_HUSAINA__');
+    setSongLink(document.getElementById('song-link-mohammed'), mohammedSong, 'currentSongIdMohammed');
+    setSongLink(document.getElementById('song-link-husaina'),  husainaSong,  'currentSongIdHusaina');
+
+    const songTitles = ['__FAV_SONG__', '__SONG_MOHAMMED__', '__SONG_HUSAINA__'];
+    const regularMemories = data.filter(m => !songTitles.includes(m.title));
 
     regularMemories.forEach((memory, index) => {
         const card = document.createElement('div');
@@ -180,12 +186,19 @@ document.getElementById('btn-add-memory').addEventListener('click', () => {
     modalOverlay.style.display = 'flex';
 });
 
-document.getElementById('btn-edit-song').addEventListener('click', () => {
+// Track which person's song we are editing
+let editingSongFor = null;
+
+function openSongModal(person) {
+    editingSongFor = person;
     document.getElementById('song-modal-overlay').style.display = 'flex';
     document.getElementById('song-search-input').value = '';
     document.getElementById('song-search-results').innerHTML = '';
     setTimeout(() => document.getElementById('song-search-input').focus(), 100);
-});
+}
+
+document.getElementById('btn-edit-song-mohammed').addEventListener('click', () => openSongModal('mohammed'));
+document.getElementById('btn-edit-song-husaina').addEventListener('click',  () => openSongModal('husaina'));
 
 document.getElementById('btn-song-cancel').addEventListener('click', () => {
     document.getElementById('song-modal-overlay').style.display = 'none';
@@ -231,11 +244,14 @@ document.getElementById('song-search-input').addEventListener('input', (e) => {
                     const spotifyQuery = encodeURIComponent(`${track.trackName} ${track.artistName}`);
                     const spotifyUrl = `https://open.spotify.com/search/${spotifyQuery}`;
 
+                    const titleKey = editingSongFor === 'husaina' ? '__SONG_HUSAINA__' : '__SONG_MOHAMMED__';
+                    const idKey    = editingSongFor === 'husaina' ? 'currentSongIdHusaina' : 'currentSongIdMohammed';
+
                     // Save to database
-                    if (window.currentSongId) {
-                        await supabase.from('memories').update({ description: songLabel }).eq('id', window.currentSongId);
+                    if (window[idKey]) {
+                        await supabase.from('memories').update({ description: songLabel }).eq('id', window[idKey]);
                     } else {
-                        await supabase.from('memories').insert([{ title: '__FAV_SONG__', description: songLabel, image_url: '' }]);
+                        await supabase.from('memories').insert([{ title: titleKey, description: songLabel, image_url: '' }]);
                     }
 
                     // Close modal and refresh

@@ -184,6 +184,26 @@ body {
     margin-bottom: 2rem;
 }
 
+.song-cards {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.song-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.song-person-label {
+    font-size: 1.6rem;
+    color: var(--dark-rose);
+    margin: 0;
+}
+
 .song-box {
     display: inline-flex;
     align-items: center;
