@@ -83,28 +83,7 @@ async function fetchMemories() {
             <p class="photo-caption">${escapeHtml(memory.description)}</p>
         `;
         
-        // Detect shape of image dynamically for the masonry grid
-        const imgWrapper = card.querySelector('.img-wrapper');
-        const img = card.querySelector('img');
-        
-        img.onload = () => {
-            if (img.naturalWidth > img.naturalHeight) {
-                card.classList.add('landscape');
-            }
-        };
-
-        const resizeObserver = new ResizeObserver(entries => {
-            for (let entry of entries) {
-                if (entry.contentRect.width > 450) {
-                    card.classList.add('landscape');
-                } else if (entry.contentRect.width < 250) {
-                    card.classList.remove('landscape');
-                }
-            }
-        });
-        resizeObserver.observe(imgWrapper);
-
-        grid.appendChild(card);
+         grid.appendChild(card);
     });
 
     // Initialize SortableJS
