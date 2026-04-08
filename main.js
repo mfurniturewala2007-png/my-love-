@@ -70,29 +70,75 @@ async function fetchMemories() {
         return;
     }
 
-    // Helper to update a song link element
-    function setSongLink(el, songMemory, idKey) {
+    // Helper to update a song link element + mini player
+    function setSongLink(el, songMemory, idKey, playerSuffix) {
+        const playerEl  = document.getElementById(`mini-player-${playerSuffix}`);
+        const artEl     = document.getElementById(`mini-art-${playerSuffix}`);
+        const audioEl   = document.getElementById(`mini-audio-${playerSuffix}`);
+        const playBtn   = document.getElementById(`mini-play-${playerSuffix}`);
+
         if (songMemory && songMemory.description) {
-            const query = encodeURIComponent(songMemory.description);
-            el.textContent = songMemory.description;
+            // Try to parse as JSON (new format), fall back to plain text
+            let name = songMemory.description;
+            let previewUrl = null;
+            let artUrl = null;
+            try {
+                const parsed = JSON.parse(songMemory.description);
+                name = parsed.name || name;
+                previewUrl = parsed.preview || null;
+                artUrl = parsed.art || null;
+            } catch(e) { /* plain text, fine */ }
+
+            const query = encodeURIComponent(name);
+            el.textContent = name;
             el.href = `https://open.spotify.com/search/${query}`;
             el.target = '_blank';
             el.style.cursor = 'pointer';
             el.style.color = '';
             window[idKey] = songMemory.id;
+
+            // Setup mini player if we have a preview
+            if (previewUrl && playerEl) {
+                artEl.src = artUrl || '';
+                audioEl.src = previewUrl;
+                playerEl.style.display = 'flex';
+
+                playBtn.onclick = () => {
+                    const isPlaying = !audioEl.paused;
+                    // Pause all other audio first
+                    document.querySelectorAll('.mini-player audio').forEach(a => { a.pause(); });
+                    document.querySelectorAll('.mini-player-art').forEach(a => a.classList.remove('playing'));
+                    document.querySelectorAll('.mini-play-btn').forEach(b => b.textContent = '▶');
+
+                    if (isPlaying) {
+                        audioEl.pause();
+                    } else {
+                        audioEl.play();
+                        artEl.classList.add('playing');
+                        playBtn.textContent = '⏸';
+                    }
+                };
+                audioEl.onended = () => {
+                    artEl.classList.remove('playing');
+                    playBtn.textContent = '▶';
+                };
+            } else if (playerEl) {
+                playerEl.style.display = 'none';
+            }
         } else {
             el.textContent = 'No song set yet ♪';
             el.removeAttribute('href');
             el.target = '';
             el.style.cursor = 'default';
             el.style.color = '#aaa';
+            if (playerEl) playerEl.style.display = 'none';
         }
     }
 
     const mohammedSong = data.find(m => m.title === '__SONG_MOHAMMED__');
     const husainaSong  = data.find(m => m.title === '__SONG_HUSAINA__');
-    setSongLink(document.getElementById('song-link-mohammed'), mohammedSong, 'currentSongIdMohammed');
-    setSongLink(document.getElementById('song-link-husaina'),  husainaSong,  'currentSongIdHusaina');
+    setSongLink(document.getElementById('song-link-mohammed'), mohammedSong, 'currentSongIdMohammed', 'mohammed');
+    setSongLink(document.getElementById('song-link-husaina'),  husainaSong,  'currentSongIdHusaina',  'husaina');
 
     const songTitles = ['__FAV_SONG__', '__SONG_MOHAMMED__', '__SONG_HUSAINA__'];
     const regularMemories = data.filter(m => !songTitles.includes(m.title));
@@ -240,7 +286,13 @@ document.getElementById('song-search-input').addEventListener('input', (e) => {
                     </div>
                 `;
                 item.addEventListener('click', async () => {
-                    const songLabel = `${track.trackName} — ${track.artistName}`;
+                    const songName = `${track.trackName} — ${track.artistName}`;
+                    // Store as JSON to include preview and art for the mini player
+                    const songData = JSON.stringify({
+                        name: songName,
+                        preview: track.previewUrl || null,
+                        art: track.artworkUrl100 || null
+                    });
                     const spotifyQuery = encodeURIComponent(`${track.trackName} ${track.artistName}`);
                     const spotifyUrl = `https://open.spotify.com/search/${spotifyQuery}`;
 
@@ -249,14 +301,14 @@ document.getElementById('song-search-input').addEventListener('input', (e) => {
 
                     // Save to database
                     if (window[idKey]) {
-                        await supabase.from('memories').update({ description: songLabel }).eq('id', window[idKey]);
+                        await supabase.from('memories').update({ description: songData }).eq('id', window[idKey]);
                     } else {
-                        await supabase.from('memories').insert([{ title: titleKey, description: songLabel, image_url: '' }]);
+                        await supabase.from('memories').insert([{ title: titleKey, description: songData, image_url: '' }]);
                     }
 
-                    // Also save a history record (separate insert, always)
+                    // Also save a history record using just the song name (readable)
                     const histKey = editingSongFor === 'husaina' ? '__HIST_HUSAINA__' : '__HIST_MOHAMMED__';
-                    await supabase.from('memories').insert([{ title: histKey, description: songLabel, image_url: '' }]);
+                    await supabase.from('memories').insert([{ title: histKey, description: songName, image_url: '' }]);
 
                     // Close modal and refresh
                     document.getElementById('song-modal-overlay').style.display = 'none';

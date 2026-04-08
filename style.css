@@ -238,6 +238,58 @@ body {
     transform: scale(1.3);
 }
 
+/* --- Mini Player --- */
+.mini-player {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: white;
+    border-radius: 50px;
+    padding: 0.5rem 1.2rem 0.5rem 0.5rem;
+    box-shadow: 0 6px 20px rgba(138, 90, 95, 0.15);
+    margin-top: 0.5rem;
+    animation: popIn 0.4s ease forwards;
+}
+
+.mini-player-art {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    animation: spin 6s linear infinite;
+    animation-play-state: paused;
+}
+
+.mini-player-art.playing {
+    animation-play-state: running;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.mini-play-btn {
+    background: var(--dark-rose);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.mini-play-btn:hover {
+    background: #1DB954;
+    transform: scale(1.1);
+}
+
 .spotify-icon {
     width: 30px;
     height: 30px;
