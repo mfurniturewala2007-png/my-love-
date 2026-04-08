@@ -187,22 +187,14 @@ body {
 .img-wrapper {
     width: 100%;
     border-radius: 30px;
-    overflow: auto; /* Required for resize handle */
-    resize: both; /* Creates a drag arrow to resize freely */
     min-height: 200px;
-    max-height: 80vh; /* Prevents dragging indefinitely */
     margin-bottom: 1.2rem;
     box-shadow: 0 10px 30px rgba(138, 90, 95, 0.15);
-    background: white; /* Give a background so the drag handle has high visibility */
-    padding-bottom: 15px; /* Huge: This creates purely empty space at the bottom for the drag handle! */
-    padding-right: 15px; /* empty space for the drag handle on the right */
+    background: transparent;
     display: block;
     position: relative;
-    scrollbar-width: none;
-}
-
-.img-wrapper::-webkit-scrollbar {
-    display: none;
+    cursor: zoom-in;
+    overflow: hidden;
 }
 
 .img-wrapper img {
@@ -211,11 +203,11 @@ body {
     object-fit: cover;
     display: block;
     border-radius: 30px;
-    transition: transform 1s ease;
+    transition: transform 0.6s ease;
 }
 
 .photo-card:hover .img-wrapper img {
-    transform: scale(1.02);
+    transform: scale(1.05);
 }
 
 .photo-caption {
@@ -391,6 +383,54 @@ footer {
     color: var(--gold);
     font-style: italic;
     display: none;
+}
+
+/* Lightbox Styling */
+.lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+}
+
+.lightbox-overlay.active {
+    display: flex;
+}
+
+.lightbox-img {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    object-fit: contain;
+    animation: zoomIn 0.3s ease;
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 3rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.lightbox-close:hover {
+    color: var(--gold);
 }
 
 @media (max-width: 768px) {

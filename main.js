@@ -77,7 +77,7 @@ async function fetchMemories() {
             <button class="card-delete-btn" onclick="deleteMemory('${memory.id}', '${memory.image_url}')">Delete</button>
             <button class="card-edit-btn" onclick="openEditModal('${memory.id}', '${escapeHtml(memory.title)}', '${escapeHtml(memory.description)}')">Edit</button>
             ${memory.title ? `<h3 class="photo-card-heading brand-font">${escapeHtml(memory.title)}</h3>` : ''}
-            <div class="img-wrapper">
+            <div class="img-wrapper" onclick="openLightbox('${memory.image_url}')">
                 <img src="${memory.image_url}" alt="Memory">
             </div>
             <p class="photo-caption">${escapeHtml(memory.description)}</p>
@@ -102,6 +102,28 @@ function escapeHtml(unsafe) {
 const modalOverlay = document.getElementById('memory-modal-overlay');
 const modalStatus = document.getElementById('modal-status');
 let isEditMode = false;
+
+// ==========================================
+// LIGHTBOX LOGIC
+// ==========================================
+const lightboxOverlay = document.getElementById('lightbox-overlay');
+const lightboxImg = document.getElementById('lightbox-img');
+const lightboxClose = document.getElementById('lightbox-close');
+
+window.openLightbox = function(imageUrl) {
+    lightboxImg.src = imageUrl;
+    lightboxOverlay.classList.add('active');
+}
+
+lightboxClose.addEventListener('click', () => {
+    lightboxOverlay.classList.remove('active');
+});
+
+lightboxOverlay.addEventListener('click', (e) => {
+    if (e.target !== lightboxImg) {
+        lightboxOverlay.classList.remove('active');
+    }
+});
 
 document.getElementById('btn-add-memory').addEventListener('click', () => {
     isEditMode = false;
