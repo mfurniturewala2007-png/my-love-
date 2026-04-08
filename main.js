@@ -82,9 +82,11 @@ async function fetchMemories() {
         window.currentSongId = songMemory.id;
     } else {
         songLinkEl.textContent = 'No song set yet ♪';
-        songLinkEl.href = 'javascript:void(0)';
+        songLinkEl.removeAttribute('href');
         songLinkEl.target = '';
         songLinkEl.onclick = null;
+        songLinkEl.style.cursor = 'default';
+        songLinkEl.style.color = '#aaa';
     }
 
     const regularMemories = data.filter(m => m.title !== '__FAV_SONG__');
