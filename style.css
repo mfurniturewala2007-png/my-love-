@@ -179,6 +179,7 @@ body {
 .photo-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    grid-auto-flow: dense;
     gap: 5rem 3rem;
     max-width: 1000px;
     margin: 0 auto;
@@ -208,6 +209,15 @@ body {
 
 .photo-card.landscape {
     grid-column: span 2;
+}
+
+.sortable-ghost {
+    opacity: 0.4;
+    background: #f9f9f9;
+}
+
+.sortable-drag {
+    cursor: grabbing !important;
 }
 
 .photo-card-heading {
