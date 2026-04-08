@@ -1,0 +1,417 @@
+:root {
+    --cream: #fffaf5;
+    --soft-rose: #f9d8d6;
+    --dark-rose: #8a5a5f;
+    --gold: #d4af37;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Quicksand', sans-serif;
+    background-color: var(--cream);
+    color: var(--dark-rose);
+    overflow-x: hidden;
+    line-height: 1.6;
+    position: relative;
+}
+
+.brand-font {
+    font-family: 'Dancing Script', cursive;
+    font-weight: 700;
+}
+
+.bg-flowers {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    overflow: hidden;
+    background-color: var(--cream);
+    pointer-events: none;
+}
+
+.flower-petal {
+    position: absolute;
+    background-color: transparent;
+    opacity: 0.3;
+    animation: floatDown linear infinite;
+}
+
+@keyframes floatDown {
+    0% { transform: translateY(-10vh) rotate(-15deg); opacity: 0; }
+    10% { opacity: 0.4; }
+    50% { transform: translateY(50vh) rotate(15deg); }
+    90% { opacity: 0.4; }
+    100% { transform: translateY(110vh) rotate(-15deg); opacity: 0; }
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+}
+
+.heart-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 2rem;
+    animation: softPulse 3s infinite ease-in-out;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes softPulse {
+    0% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.7; }
+}
+
+.hero h1 {
+    font-size: 4.5rem;
+    color: var(--gold);
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    text-shadow: 1px 1px 4px rgba(212, 175, 55, 0.15);
+}
+
+.hero p.quote {
+    font-size: 1.5rem;
+    color: var(--dark-rose);
+    max-width: 600px;
+    opacity: 0.9;
+}
+
+.timer-section {
+    text-align: center;
+    padding: 2rem 1rem 4rem;
+}
+
+.timer-section h2 {
+    font-size: 2.2rem;
+    color: var(--gold);
+    margin-bottom: 2rem;
+}
+
+.counter {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.time-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(249, 216, 214, 0.2);
+    padding: 1.5rem;
+    border-radius: 20px;
+    min-width: 100px;
+}
+
+.time-box span {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--dark-rose);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.time-box p {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--dark-rose);
+    opacity: 0.8;
+    font-weight: 500;
+}
+
+.gallery-container {
+    padding: 2rem 1rem 8rem;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5rem 3rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.photo-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    position: relative;
+}
+
+.photo-card-heading {
+    font-size: 2.2rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.img-wrapper {
+    width: 100%;
+    border-radius: 30px;
+    overflow: auto; /* Required for resize handle */
+    resize: both; /* Creates a drag arrow to resize freely */
+    min-height: 200px;
+    max-height: 80vh; /* Prevents dragging indefinitely */
+    margin-bottom: 1.2rem;
+    box-shadow: 0 10px 30px rgba(138, 90, 95, 0.15);
+    background: white; /* Give a background so the drag handle has high visibility */
+    padding-bottom: 15px; /* Huge: This creates purely empty space at the bottom for the drag handle! */
+    padding-right: 15px; /* empty space for the drag handle on the right */
+    display: block;
+    position: relative;
+    scrollbar-width: none;
+}
+
+.img-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 30px;
+    transition: transform 1s ease;
+}
+
+.photo-card:hover .img-wrapper img {
+    transform: scale(1.02);
+}
+
+.photo-caption {
+    font-size: 1.2rem;
+    color: var(--dark-rose);
+    line-height: 1.5;
+    max-width: 90%;
+    opacity: 0.9;
+}
+
+footer {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--gold);
+    font-size: 2rem;
+}
+
+/* --- Admin UI Styles --- */
+.admin-controls {
+    display: none;
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 100;
+}
+
+.admin-controls.active {
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+}
+
+.btn {
+    background-color: var(--gold);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+    transition: transform 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--gold);
+    color: var(--gold);
+}
+
+.card-edit-btn {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50px;
+    padding: 5px 15px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: bold;
+    color: var(--dark-rose);
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-delete-btn {
+    display: none;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(255, 77, 77, 0.9);
+    border: none;
+    border-radius: 50px;
+    padding: 5px 15px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin-active .card-edit-btn,
+.admin-active .card-delete-btn {
+    display: block;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal {
+    background: var(--cream);
+    padding: 2rem;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    position: relative;
+    max-height: 90vh; /* Don't overflow the screen */
+    overflow-y: auto;
+}
+
+.modal.active {
+    display: block;
+}
+
+.modal h2 {
+    font-family: 'Dancing Script', cursive;
+    color: var(--gold);
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--soft-rose);
+    border-radius: 10px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1rem;
+    color: var(--dark-rose);
+    background: white;
+}
+
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 0.8rem 0;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.loader {
+    text-align: center;
+    padding: 3rem;
+    color: var(--gold);
+    font-style: italic;
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 3.5rem;
+    }
+    .hero p.quote {
+        font-size: 1.3rem;
+    }
+    .photo-grid {
+        grid-template-columns: 1fr;
+        gap: 4rem;
+        padding: 0 1rem;
+    }
+    .timer-section h2 {
+        font-size: 1.8rem;
+    }
+    .time-box {
+        min-width: 80px;
+        padding: 1rem;
+    }
+    .time-box span {
+        font-size: 2rem;
+    }
+}
