@@ -106,12 +106,13 @@ body {
 }
 
 .hero h1 {
-    font-size: 4.5rem;
+    font-size: clamp(2.5rem, 10vw, 4.5rem);
     color: var(--gold);
-    line-height: 1.2;
+    line-height: 1.1;
     margin-bottom: 1.5rem;
     text-shadow: 1px 1px 4px rgba(212, 175, 55, 0.15);
     opacity: 0;
+    max-width: 100%;
     animation: dropIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
@@ -139,8 +140,8 @@ body {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 1.5rem;
-    max-width: 800px;
+    gap: 1rem;
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -205,16 +206,18 @@ body {
 }
 
 .song-box {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
+    gap: 0.8rem;
     background: white;
-    padding: 1rem 2rem;
+    padding: 0.8rem 1.5rem;
     border-radius: 50px;
     box-shadow: 0 10px 30px rgba(138, 90, 95, 0.15);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .song-box:hover {
@@ -297,10 +300,14 @@ body {
 }
 
 .song-link {
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--dark-rose);
     text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
 }
 
 .song-link:hover {
@@ -734,18 +741,36 @@ footer {
 }
 
 @media (max-width: 768px) {
+    .hero {
+        padding: 1rem;
+    }
     .hero h1 {
-        font-size: 3.5rem;
+        margin-bottom: 1rem;
     }
     .hero p.quote {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
+        padding: 0 10px;
+    }
+    .song-cards {
+        gap: 1.5rem;
+        width: 100%;
+    }
+    .song-card {
+        width: 100%;
+    }
+    .song-box {
+        width: 95%;
+        margin: 0 auto;
+        padding: 0.8rem 1rem;
+    }
+    .song-link {
+        max-width: 180px;
     }
     .photo-grid {
         grid-template-columns: 1fr;
-        gap: 4rem;
+        gap: 3rem;
         padding: 0 1rem;
     }
-    
     .photo-card.landscape {
         grid-column: span 1;
     }
@@ -753,10 +778,47 @@ footer {
         font-size: 1.8rem;
     }
     .time-box {
-        min-width: 80px;
-        padding: 1rem;
+        min-width: 70px;
+        padding: 0.8rem;
+        flex: 1 1 70px;
     }
     .time-box span {
+        font-size: 1.8rem;
+    }
+    .song-history-columns {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .song-history-panel {
+        padding: 0 1rem;
+    }
+    .img-wrapper {
+        resize: none; /* Disable manual resize on mobile */
+        min-height: auto;
+    }
+    .photo-card-heading {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+    .hero p.quote {
+        font-size: 1.1rem;
+    }
+    .song-person-label {
+        font-size: 1.4rem;
+    }
+    .song-link {
+        font-size: 1rem;
+        max-width: 150px;
+    }
+    .modal {
+        padding: 1.5rem 1rem;
+    }
+    .modal h2 {
         font-size: 2rem;
     }
 }
