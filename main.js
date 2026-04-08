@@ -548,7 +548,6 @@ async function fetchSongHistory() {
 
             const query = encodeURIComponent(name);
             const li = document.createElement('li');
-            li.style.cursor = previewUrl ? 'pointer' : 'default';
             li.style.display = 'flex';
             li.style.alignItems = 'center';
             li.style.justifyContent = 'space-between';
@@ -557,9 +556,37 @@ async function fetchSongHistory() {
             const infoDiv = document.createElement('div');
             infoDiv.innerHTML = `
                 <a href="https://open.spotify.com/search/${query}" target="_blank">${name}</a>
-                <span>${date}${previewUrl ? ' 🎵' : ''}</span>
+                <span>${date}</span>
             `;
 
+            const btnGroup = document.createElement('div');
+            btnGroup.style.cssText = 'display:flex;align-items:center;gap:4px;flex-shrink:0;';
+
+            // Play button (only if preview available)
+            if (previewUrl) {
+                const playBtn = document.createElement('button');
+                playBtn.textContent = '▶';
+                playBtn.title = 'Preview';
+                playBtn.style.cssText = 'background:var(--dark-rose);border:none;color:white;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:0.7rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;';
+                playBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isPlaying = historyAudio.src.includes(encodeURIComponent(previewUrl)) || historyAudio.src === previewUrl;
+                    // Stop all history playback and reset all play buttons
+                    historyAudio.pause();
+                    historyAudio.src = '';
+                    document.querySelectorAll('.hist-play-btn').forEach(b => b.textContent = '▶');
+                    if (!isPlaying || historyAudio.paused) {
+                        historyAudio.src = previewUrl;
+                        historyAudio.play();
+                        playBtn.textContent = '⏸';
+                        historyAudio.onended = () => { playBtn.textContent = '▶'; };
+                    }
+                });
+                playBtn.classList.add('hist-play-btn');
+                btnGroup.appendChild(playBtn);
+            }
+
+            // Delete button
             const delBtn = document.createElement('button');
             delBtn.textContent = '✕';
             delBtn.title = 'Delete from history';
@@ -571,22 +598,10 @@ async function fetchSongHistory() {
                 await supabase.from('memories').delete().eq('id', item.id);
                 li.remove();
             });
+            btnGroup.appendChild(delBtn);
 
             li.appendChild(infoDiv);
-            li.appendChild(delBtn);
-
-            // Hover to preview — desktop only
-            if (previewUrl && !window.matchMedia('(hover: none)').matches) {
-                li.addEventListener('mouseenter', () => {
-                    historyAudio.src = previewUrl;
-                    historyAudio.play();
-                });
-                li.addEventListener('mouseleave', () => {
-                    historyAudio.pause();
-                    historyAudio.src = '';
-                });
-            }
-
+            li.appendChild(btnGroup);
             listEl.appendChild(li);
         });
     }
