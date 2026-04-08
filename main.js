@@ -70,7 +70,20 @@ async function fetchMemories() {
         return;
     }
 
-    data.forEach((memory, index) => {
+    // Separate the special song memory
+    const songMemory = data.find(m => m.title === '__FAV_SONG__');
+    if (songMemory && songMemory.description) {
+        document.getElementById('song-link').textContent = songMemory.description;
+        document.getElementById('song-link').href = `https://open.spotify.com/search/${encodeURIComponent(songMemory.description)}`;
+        window.currentSongId = songMemory.id;
+    } else {
+        document.getElementById('song-link').textContent = "Pick a song!";
+        document.getElementById('song-link').href = "#";
+    }
+
+    const regularMemories = data.filter(m => m.title !== '__FAV_SONG__');
+
+    regularMemories.forEach((memory, index) => {
         const card = document.createElement('div');
         card.className = 'photo-card reveal visible'; 
         card.innerHTML = `
@@ -157,6 +170,19 @@ document.getElementById('btn-add-memory').addEventListener('click', () => {
     modalStatus.innerText = '';
     
     modalOverlay.style.display = 'flex';
+});
+
+document.getElementById('btn-edit-song').addEventListener('click', async () => {
+    const newSong = prompt("Enter your new favourite song (e.g. 'Perfect Ed Sheeran'):");
+    if (!newSong) return;
+
+    if (window.currentSongId) {
+        await supabase.from('memories').update({ description: newSong }).eq('id', window.currentSongId);
+    } else {
+        await supabase.from('memories').insert([{ title: '__FAV_SONG__', description: newSong, image_url: '' }]);
+    }
+    
+    fetchMemories();
 });
 
 // Since we are in a module, we attach it to window so inline onclick can see it
