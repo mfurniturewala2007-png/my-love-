@@ -59,7 +59,7 @@ body {
     bottom: 0;
     z-index: -1;
     overflow: hidden;
-    background-color: transparent;
+    background: linear-gradient(135deg, #FFB2D0, #F8C8DC);
     pointer-events: none;
 }
 
@@ -134,6 +134,9 @@ body {
     -webkit-tap-highlight-color: transparent;
     filter: drop-shadow(0 0 15px rgba(255, 77, 77, 0.6));
     opacity: 0;
+}
+
+.hero.visible .heart-icon {
     animation: 
         heartFadeIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s forwards, 
         softPulse 3s infinite ease-in-out 1.3s;
@@ -158,6 +161,9 @@ body {
     text-shadow: 1px 1px 4px rgba(212, 175, 55, 0.15);
     opacity: 0;
     max-width: 100%;
+}
+
+.hero.visible h1 {
     animation: dropIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
@@ -166,6 +172,9 @@ body {
     color: var(--dark-rose);
     max-width: 600px;
     opacity: 0;
+}
+
+.hero.visible p.quote {
     animation: swoopIn 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     animation-delay: 0.3s;
 }
@@ -550,10 +559,17 @@ body {
     max-width: 100%;
     border-radius: 12px;
     margin-bottom: 0.6rem;
-    background: transparent;
+    background: var(--bg-hover);
     display: block;
     position: relative;
     overflow: hidden;
+    animation: skeletonPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes skeletonPulse {
+    0% { background-color: var(--bg-hover); }
+    50% { background-color: #f2e6e1; }
+    100% { background-color: var(--bg-hover); }
 }
 
 .img-wrapper img {
@@ -561,7 +577,12 @@ body {
     height: auto;
     display: block;
     border-radius: 12px;
-    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.img-wrapper img.loaded {
+    opacity: 1;
 }
 
 .photo-card:hover .img-wrapper img {
