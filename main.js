@@ -1,5 +1,6 @@
 import './style.css'
 import { createClient } from '@supabase/supabase-js'
+import { initGrainient } from './Grainient.js'
 
 // ==========================================
 // CONFIGURATION: SUPABASE CREDENTIALS
@@ -7,7 +8,7 @@ import { createClient } from '@supabase/supabase-js'
 const SUPABASE_URL = 'https://raqbjjawbofdsyamqquj.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcWJqamF3Ym9mZHN5YW1xcXVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2MjgzMTYsImV4cCI6MjA5MTIwNDMxNn0.W7LKdeCoZVeX_EhLVkP_cYXETTFzhoUNNEStBUnezNg';
         
-const SECRET_PASSCODE = 'husaina123';
+const SECRET_PASSCODE = 'hussaina123';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -31,7 +32,7 @@ document.getElementById('secret-trigger').addEventListener('click', () => {
 
 function promptAdmin() {
     const pass = prompt("Enter the secret passcode to unlock Edit Mode:");
-    if (pass === SECRET_PASSCODE) {
+    if (pass === SECRET_PASSCODE || pass === 'husainah123' || pass === 'husaina123') {
         isAdmin = true;
         document.getElementById('admin-controls').classList.add('active');
         document.body.classList.add('admin-active');
@@ -134,7 +135,7 @@ async function fetchMemories() {
             el.removeAttribute('href');
             el.target = '';
             el.style.cursor = 'default';
-            el.style.color = '#aaa';
+            el.style.color = 'var(--text-muted)';
             if (playerEl) playerEl.style.display = 'none';
         }
     }
@@ -153,22 +154,14 @@ async function fetchMemories() {
         card.innerHTML = `
             <button class="card-delete-btn" onclick="deleteMemory('${memory.id}', '${memory.image_url}')">Delete</button>
             <button class="card-edit-btn" onclick="openEditModal('${memory.id}', '${escapeHtml(memory.title)}', '${escapeHtml(memory.description)}')">Edit</button>
-            ${memory.title ? `<h3 class="photo-card-heading brand-font">${escapeHtml(memory.title)}</h3>` : ''}
             <div class="img-wrapper">
                 <img src="${memory.image_url}" alt="Memory">
             </div>
+            ${memory.title ? `<h3 class="photo-card-heading brand-font">${escapeHtml(memory.title)}</h3>` : ''}
             <p class="photo-caption">${escapeHtml(memory.description)}</p>
         `;
         
-         // Detect shape of image to span 2 columns if landscape
-         const img = card.querySelector('img');
-         img.onload = () => {
-             if (img.naturalWidth > img.naturalHeight) {
-                 card.classList.add('landscape');
-             }
-         };
-
-         grid.appendChild(card);
+        grid.appendChild(card);
     });
 
     // Initialize SortableJS
@@ -438,26 +431,6 @@ document.getElementById('btn-save').addEventListener('click', async () => {
 // 4. ANIMATIONS & TIMER 
 // ==========================================
 function initAnimations() {
-    const bgContainer = document.getElementById('bg-flowers');
-    const petalCount = 20;
-
-    for (let i = 0; i < petalCount; i++) {
-        const petal = document.createElement('div');
-        petal.classList.add('flower-petal');
-        petal.innerHTML = `<svg viewBox="0 0 24 24" fill="#ff4d4d" style="width:100%; height:100%;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
-        const size = Math.random() * 15 + 15;
-        const leftPos = Math.random() * 100;
-        const delay = Math.random() * 15;
-        const duration = Math.random() * 15 + 20;
-
-        petal.style.width = size + 'px';
-        petal.style.height = size + 'px';
-        petal.style.left = leftPos + 'vw';
-        petal.style.animationDelay = '-' + delay + 's';
-        petal.style.animationDuration = duration + 's';
-        bgContainer.appendChild(petal);
-    }
-
     const startDate = new Date('2025-12-23T00:00:00');
     function updateTimer() {
         const now = new Date();
@@ -493,6 +466,7 @@ function initAnimations() {
 
 // Start everything up safely
 initAnimations();
+initGrainient(document.getElementById('grainient-bg'));
 fetchMemories();
 fetchSongHistory();
 
@@ -523,7 +497,7 @@ async function fetchSongHistory() {
     function renderHistory(listEl, items) {
         listEl.innerHTML = '';
         if (items.length === 0) {
-            listEl.innerHTML = '<li style="color:#aaa">No history yet</li>';
+            listEl.innerHTML = '<li style="color:var(--text-muted)">No history yet</li>';
             return;
         }
         items.forEach(item => {
@@ -595,7 +569,7 @@ async function fetchSongHistory() {
             delBtn.textContent = '✕';
             delBtn.title = 'Delete from history';
             delBtn.style.cssText = 'background:none;border:none;color:#ccc;cursor:pointer;font-size:0.9rem;padding:0 4px;flex-shrink:0;transition:color 0.2s;';
-            delBtn.addEventListener('mouseenter', () => delBtn.style.color = '#e74c3c');
+            delBtn.addEventListener('mouseenter', () => delBtn.style.color = 'var(--danger)');
             delBtn.addEventListener('mouseleave', () => delBtn.style.color = '#ccc');
             delBtn.addEventListener('click', async (e) => {
                 e.stopPropagation();
