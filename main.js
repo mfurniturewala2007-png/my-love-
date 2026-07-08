@@ -374,36 +374,46 @@ document.getElementById('btn-save').addEventListener('click', async () => {
         }
     } else {
         if (fileInput.files.length === 0) {
-            modalStatus.innerText = "Please select an image!";
+            modalStatus.innerText = "Please select at least one image!";
             return;
         }
-        const file = fileInput.files[0];
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-        const filePath = `memories/${fileName}`;
+        
+        const files = fileInput.files;
+        const recordsToInsert = [];
 
-        modalStatus.innerText = "Uploading image...";
-        const { error: uploadError } = await supabase.storage
-            .from('images')
-            .upload(filePath, file);
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+            const filePath = `memories/${fileName}`;
 
-        if (uploadError) {
-            modalStatus.innerText = "Upload failed: " + uploadError.message;
-            return;
-        }
+            modalStatus.innerText = `Uploading image ${i + 1} of ${files.length}...`;
+            const { error: uploadError } = await supabase.storage
+                .from('images')
+                .upload(filePath, file);
 
-        const { data: { publicUrl } } = supabase.storage
-            .from('images')
-            .getPublicUrl(filePath);
+            if (uploadError) {
+                modalStatus.innerText = `Upload failed on image ${i + 1}: ` + uploadError.message;
+                return;
+            }
 
-        modalStatus.innerText = "Saving data...";
-        const { error: dbError } = await supabase
-            .from('memories')
-            .insert([{
-                title: title,
+            const { data: { publicUrl } } = supabase.storage
+                .from('images')
+                .getPublicUrl(filePath);
+
+            const itemTitle = files.length > 1 && title ? `${title} (${i + 1})` : title;
+
+            recordsToInsert.push({
+                title: itemTitle,
                 description: desc,
                 image_url: publicUrl
-            }]);
+            });
+        }
+
+        modalStatus.innerText = "Saving all memories...";
+        const { error: dbError } = await supabase
+            .from('memories')
+            .insert(recordsToInsert);
 
         if (dbError) {
             modalStatus.innerText = "Save failed: " + dbError.message;
