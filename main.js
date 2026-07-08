@@ -489,12 +489,15 @@ async function checkAllowedPhone(phone) {
 function showLogin() {
     document.getElementById('login-overlay').classList.remove('hidden');
     document.getElementById('main-content').style.display = 'none';
+    document.getElementById('bg-flowers').style.display = 'none';
 }
 
 function unlockWebsite() {
     document.getElementById('login-overlay').classList.add('hidden');
     document.getElementById('main-content').style.display = 'block';
+    document.getElementById('bg-flowers').style.display = 'block';
     document.getElementById('admin-controls').classList.add('active');
+    document.title = "Hussaina & Mohammed";
     
     // Start animations and fetch data
     initAnimations();
@@ -503,19 +506,8 @@ function unlockWebsite() {
 }
 
 async function verifyLogin() {
-    const savedPhone = localStorage.getItem('auth_phone');
-    if (!savedPhone) {
-        showLogin();
-        return;
-    }
-    
-    const isAllowed = await checkAllowedPhone(savedPhone);
-    if (isAllowed) {
-        unlockWebsite();
-    } else {
-        localStorage.removeItem('auth_phone');
-        showLogin();
-    }
+    // Always show the login prompt on page load/reload
+    showLogin();
 }
 
 // Setup login event listeners
@@ -527,22 +519,21 @@ const loginError = document.getElementById('login-error');
 async function handleLogin() {
     const phoneVal = loginInput.value.trim();
     if (phoneVal.length !== 10 || isNaN(phoneVal)) {
-        showLoginError("Please enter a valid 10-digit number. 🙈");
+        showLoginError("Access Denied: Invalid identifier code.");
         return;
     }
     
     loginBtn.disabled = true;
-    loginBtn.textContent = "Verifying... 🔑";
+    loginBtn.textContent = "Verifying...";
     loginError.textContent = "";
     
     const isAllowed = await checkAllowedPhone(phoneVal);
     if (isAllowed) {
-        localStorage.setItem('auth_phone', phoneVal);
         unlockWebsite();
     } else {
         loginBtn.disabled = false;
-        loginBtn.textContent = "Unlock 🔑";
-        showLoginError("Oops! That's not one of our numbers. 🙈");
+        loginBtn.textContent = "Authenticate";
+        showLoginError("Access Denied: Invalid identifier code.");
     }
 }
 
