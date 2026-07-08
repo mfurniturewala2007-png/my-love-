@@ -8,45 +8,32 @@ import { initGrainient } from './Grainient.js'
 const SUPABASE_URL = 'https://raqbjjawbofdsyamqquj.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcWJqamF3Ym9mZHN5YW1xcXVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2MjgzMTYsImV4cCI6MjA5MTIwNDMxNn0.W7LKdeCoZVeX_EhLVkP_cYXETTFzhoUNNEStBUnezNg';
         
-const SECRET_PASSCODE = 'hussaina123';
-
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ==========================================
-// 1. ADMIN MODE AUTHENTICATION
+// 1. EDIT MODE CONTROLS
 // ==========================================
 let isAdmin = false;
-let tapCount = 0;
-let tapTimer = null;
 
-document.getElementById('secret-trigger').addEventListener('click', () => {
-    tapCount++;
-    clearTimeout(tapTimer);
-    tapTimer = setTimeout(() => { tapCount = 0; }, 1500);
+const btnToggleEdit = document.getElementById('btn-toggle-edit');
+const btnAddMemory = document.getElementById('btn-add-memory');
 
-    if (tapCount >= 3) {
-        tapCount = 0;
-        if (!isAdmin) promptAdmin();
-    }
-});
-
-function promptAdmin() {
-    const pass = prompt("Enter the secret passcode to unlock Edit Mode:");
-    if (pass === SECRET_PASSCODE || pass === 'husainah123' || pass === 'husaina123') {
-        isAdmin = true;
-        document.getElementById('admin-controls').classList.add('active');
-        document.body.classList.add('admin-active');
-        alert("Unlocked!");
-    } else if (pass != null) {
-        alert("Incorrect passcode!");
-    }
+if (btnToggleEdit) {
+    btnToggleEdit.addEventListener('click', () => {
+        isAdmin = !isAdmin;
+        if (isAdmin) {
+            btnToggleEdit.textContent = '👁️ View';
+            btnToggleEdit.classList.add('active-edit');
+            if (btnAddMemory) btnAddMemory.style.display = 'inline-block';
+            document.body.classList.add('admin-active');
+        } else {
+            btnToggleEdit.textContent = '✏️ Edit';
+            btnToggleEdit.classList.remove('active-edit');
+            if (btnAddMemory) btnAddMemory.style.display = 'none';
+            document.body.classList.remove('admin-active');
+        }
+    });
 }
-
-document.getElementById('btn-logout').addEventListener('click', () => {
-    isAdmin = false;
-    document.getElementById('admin-controls').classList.remove('active');
-    document.body.classList.remove('admin-active');
-});
 
 // ==========================================
 // 2. FETCH AND DISPLAY MEMORIES
@@ -497,6 +484,7 @@ function showLogin() {
 function unlockWebsite() {
     document.getElementById('login-overlay').classList.add('hidden');
     document.getElementById('main-content').style.display = 'block';
+    document.getElementById('admin-controls').classList.add('active');
     
     // Start animations and fetch data
     initAnimations();

@@ -654,6 +654,13 @@ footer {
     background-color: transparent;
     border: 2px solid var(--gold);
     color: var(--gold);
+    transition: all 0.3s ease;
+}
+
+.btn-outline.active-edit {
+    background-color: var(--gold);
+    color: white;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
 }
 
 .card-edit-btn {
