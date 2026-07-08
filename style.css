@@ -854,6 +854,85 @@ footer {
     color: var(--gold);
 }
 
+/* --- Login Screen --- */
+.login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.login-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.login-card {
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 3rem 2.5rem;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 440px;
+    box-shadow: 0 30px 60px rgba(138, 90, 95, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+    text-align: center;
+    animation: modalPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.login-heart {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    animation: softPulse 3s infinite ease-in-out;
+    display: inline-block;
+}
+
+.login-card h1 {
+    font-size: 2.6rem;
+    color: var(--dark-rose);
+    margin-bottom: 0.8rem;
+}
+
+.login-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-subtle);
+    margin-bottom: 2rem;
+    line-height: 1.4;
+}
+
+.login-card .form-group input {
+    text-align: center;
+    font-size: 1.2rem !important;
+    letter-spacing: 2px;
+}
+
+.login-error-msg {
+    color: var(--danger);
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    min-height: 1.2rem;
+    font-weight: 500;
+}
+
+.login-card.shake {
+    animation: cardShake 0.4s ease-in-out;
+}
+
+@keyframes cardShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+}
+
 @media (max-width: 768px) {
     /* --- Base Layout --- */
     .hero {

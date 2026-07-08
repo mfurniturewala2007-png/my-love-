@@ -145,7 +145,7 @@ async function fetchMemories() {
     setSongLink(document.getElementById('song-link-mohammed'), mohammedSong, 'currentSongIdMohammed', 'mohammed');
     setSongLink(document.getElementById('song-link-husaina'),  husainaSong,  'currentSongIdHusaina',  'husaina');
 
-    const songTitles = ['__FAV_SONG__', '__SONG_MOHAMMED__', '__SONG_HUSAINA__'];
+    const songTitles = ['__FAV_SONG__', '__SONG_MOHAMMED__', '__SONG_HUSAINA__', '__ALLOWED_PHONES__'];
     const regularMemories = data.filter(m => !songTitles.includes(m.title));
 
     regularMemories.forEach((memory, index) => {
@@ -464,11 +464,109 @@ function initAnimations() {
     revealElements.forEach(el => observer.observe(el));
 }
 
-// Start everything up safely
-initAnimations();
+// Start background WebGL immediately for the login page
 initGrainient(document.getElementById('grainient-bg'));
-fetchMemories();
-fetchSongHistory();
+
+// Setup Login verification
+async function checkAllowedPhone(phone) {
+    try {
+        const { data, error } = await supabase
+            .from('memories')
+            .select('description')
+            .eq('title', '__ALLOWED_PHONES__')
+            .maybeSingle();
+        
+        if (error || !data) {
+            console.error("Error fetching allowed phones:", error);
+            return false;
+        }
+        
+        const allowedList = JSON.parse(data.description);
+        return allowedList.includes(phone.trim());
+    } catch (err) {
+        console.error("Verification error:", err);
+        return false;
+    }
+}
+
+function showLogin() {
+    document.getElementById('login-overlay').classList.remove('hidden');
+    document.getElementById('main-content').style.display = 'none';
+}
+
+function unlockWebsite() {
+    document.getElementById('login-overlay').classList.add('hidden');
+    document.getElementById('main-content').style.display = 'block';
+    
+    // Start animations and fetch data
+    initAnimations();
+    fetchMemories();
+    fetchSongHistory();
+}
+
+async function verifyLogin() {
+    const savedPhone = localStorage.getItem('auth_phone');
+    if (!savedPhone) {
+        showLogin();
+        return;
+    }
+    
+    const isAllowed = await checkAllowedPhone(savedPhone);
+    if (isAllowed) {
+        unlockWebsite();
+    } else {
+        localStorage.removeItem('auth_phone');
+        showLogin();
+    }
+}
+
+// Setup login event listeners
+const loginInput = document.getElementById('login-phone');
+const loginBtn = document.getElementById('btn-login');
+const loginCard = document.querySelector('.login-card');
+const loginError = document.getElementById('login-error');
+
+async function handleLogin() {
+    const phoneVal = loginInput.value.trim();
+    if (phoneVal.length !== 10 || isNaN(phoneVal)) {
+        showLoginError("Please enter a valid 10-digit number. 🙈");
+        return;
+    }
+    
+    loginBtn.disabled = true;
+    loginBtn.textContent = "Verifying... 🔑";
+    loginError.textContent = "";
+    
+    const isAllowed = await checkAllowedPhone(phoneVal);
+    if (isAllowed) {
+        localStorage.setItem('auth_phone', phoneVal);
+        unlockWebsite();
+    } else {
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Unlock 🔑";
+        showLoginError("Oops! That's not one of our numbers. 🙈");
+    }
+}
+
+function showLoginError(msg) {
+    loginError.textContent = msg;
+    loginCard.classList.add('shake');
+    setTimeout(() => {
+        loginCard.classList.remove('shake');
+    }, 400);
+}
+
+if (loginBtn) loginBtn.addEventListener('click', handleLogin);
+if (loginInput) {
+    loginInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            handleLogin();
+        }
+    });
+}
+
+// Run verification on page load
+verifyLogin();
 
 // ==========================================
 // 5. SONG HISTORY

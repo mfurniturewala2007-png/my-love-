@@ -20,8 +20,24 @@
         <div id="grainient-bg"></div>
     </div>
 
-    <!-- Hero Section -->
-    <section class="hero reveal">
+    <!-- Login Overlay -->
+    <div id="login-overlay" class="login-overlay">
+        <div class="login-card">
+            <span class="login-heart">💖</span>
+            <h1 class="brand-font">Our Memory Book</h1>
+            <p class="login-subtitle">Please enter your phone number to unlock our moments.</p>
+            <div class="form-group">
+                <input type="text" id="login-phone" placeholder="10-digit phone number" maxlength="10" autocomplete="off">
+            </div>
+            <button id="btn-login" class="btn" style="width: 100%; margin-top: 1rem;">Unlock 🔑</button>
+            <p id="login-error" class="login-error-msg"></p>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <div id="main-content" style="display: none;">
+        <!-- Hero Section -->
+        <section class="hero reveal">
         <!-- Secret trigger is the heart icon -->
         <svg class="heart-icon" id="secret-trigger" viewBox="0 0 24 24" fill="none">
             <path opacity="1"
@@ -169,6 +185,8 @@
                 <button class="btn btn-outline" id="btn-song-cancel">Cancel</button>
             </div>
         </div>
+    </div>
+
     </div>
 
     <!-- Load main script using Vite module entrypoint -->
