@@ -19,9 +19,9 @@
     --spotify-green: #1DB954; /* ONLY for spotify logo/icon, not buttons/borders */
 
     /* === Grainient background (retuned to match brand) === */
-    --grainient-1: #FFB2D0;   /* rose pink highlight */
-    --grainient-2: #FF77A8;   /* vibrant pink accent */
-    --grainient-3: #F8C8DC;   /* pastel pink base */
+    --grainient-1: #E0F2FE;   /* light sky blue highlight */
+    --grainient-2: #7DD3FC;   /* vibrant sky blue accent */
+    --grainient-3: #BAE6FD;   /* pastel sky blue base */
 }
 
 *, *::before, *::after {
@@ -82,7 +82,7 @@ body {
     bottom: 0;
     z-index: -1;
     overflow: hidden;
-    background: linear-gradient(135deg, #FFB2D0, #F8C8DC);
+    background: linear-gradient(135deg, #E0F2FE, #BAE6FD);
     pointer-events: none;
 }
 
