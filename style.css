@@ -265,12 +265,21 @@ body {
     max-width: 100%;
 }
 
-/* CSS animations removed; handled by GSAP ScrollFloat */
+/* CSS animations removed; handled by heading reveal IntersectionObserver */
 .hero p.quote {
     font-size: 1.5rem;
     color: var(--dark-rose);
     max-width: 600px;
+    /* Starts hidden, revealed by .heading-visible class */
     opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.15s,
+                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
+}
+
+.hero p.quote.heading-visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .timer-section {
@@ -1423,17 +1432,16 @@ footer {
     }
 }
 
-/* --- ScrollFloat Component CSS --- */
-.scroll-float {
-    display: inline-block;
-    overflow: hidden;
+/* --- Heading Reveal (replaces GSAP ScrollFloat) --- */
+/* One-shot fade-up when heading enters viewport — zero per-frame JS */
+.heading-hidden {
+    opacity: 0;
+    transform: translateY(22px);
 }
 
-.scroll-float-text {
-    display: inline-block;
-}
-
-.char {
-    display: inline-block;
-    transform-origin: 50% 0%;
+.heading-visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
 }
