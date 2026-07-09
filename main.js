@@ -1,6 +1,9 @@
 import './style.css'
 import { createClient } from '@supabase/supabase-js'
 import { initGrainient } from './Grainient.js'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import ColorCustomizer from './ColorCustomizer.jsx'
 
 // ==========================================
 // CONFIGURATION: SUPABASE CREDENTIALS
@@ -508,9 +511,34 @@ function initHeadingReveals() {
 }
 
 // Start background WebGL immediately for the login page
-initGrainient(document.getElementById('grainient-bg'), {
-    intersectionTrigger: document.querySelector('.hero')
+const grainientInstance = initGrainient(document.getElementById('grainient-bg'), {
+    intersectionTrigger: document.querySelector('.hero'),
+    color1: '#FFF5EB',
+    color2: '#d4af37',
+    color3: '#FFD9C4'
 });
+
+// Render the color customizer React component
+const customizerRootEl = document.getElementById('color-customizer-root');
+if (customizerRootEl) {
+    const root = ReactDOM.createRoot(customizerRootEl);
+    root.render(
+        React.createElement(React.StrictMode, null,
+            React.createElement(ColorCustomizer, {
+                supabase: supabase,
+                onColorChange: (newColors) => {
+                    if (grainientInstance) {
+                        grainientInstance.updateOptions({
+                            color1: newColors.color1,
+                            color2: newColors.color2,
+                            color3: newColors.color3
+                        });
+                    }
+                }
+            })
+        )
+    );
+}
 
 // Setup Login verification
 async function checkAllowedPhone(phone) {
