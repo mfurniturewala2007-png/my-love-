@@ -67,10 +67,6 @@ body {
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    /* Prevent overscroll bounce competing with scroll compositor */
-    overscroll-behavior-y: none;
-    /* Hint to browser: this element scrolls vertically */
-    touch-action: pan-y;
 }
 
 .brand-font {
@@ -955,31 +951,38 @@ footer {
 }
 
 /* Lightbox Styling */
+/* Use visibility+opacity instead of always-on display:flex+backdrop-filter
+   which is a known iOS Safari bug that eats touch events on the whole page */
 .lightbox-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0);
+    background: rgba(0, 0, 0, 0.85);
     z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
-    -webkit-backdrop-filter: blur(0px);
-    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    /* Hidden by default - no touch interception */
+    opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    /* Cross-browser transitions */
-    transition: background 0.3s ease,
-                -webkit-backdrop-filter 0.3s ease,
-                backdrop-filter 0.3s ease;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .lightbox-overlay.active {
-    background: rgba(0, 0, 0, 0.85);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    opacity: 1;
+    visibility: visible;
     pointer-events: all;
+}
+
+.lightbox-overlay.closing {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .lightbox-img {

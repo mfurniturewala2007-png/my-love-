@@ -196,11 +196,13 @@ window.openLightbox = function(imageUrl) {
 
 function closeLightbox() {
     lightboxOverlay.classList.add('closing');
+    lightboxOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+    // Clear image src after fade-out completes
     setTimeout(() => {
-        lightboxOverlay.classList.remove('active', 'closing');
+        lightboxOverlay.classList.remove('closing');
         lightboxImg.src = '';
-        document.body.style.overflow = '';
-    }, 250);
+    }, 320);
 }
 
 lightboxClose.addEventListener('click', closeLightbox);
