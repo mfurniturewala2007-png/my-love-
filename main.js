@@ -508,7 +508,9 @@ function initHeadingReveals() {
 }
 
 // Start background WebGL immediately for the login page
-initGrainient(document.getElementById('grainient-bg'));
+initGrainient(document.getElementById('grainient-bg'), {
+    intersectionTrigger: document.querySelector('.hero')
+});
 
 // Setup Login verification
 async function checkAllowedPhone(phone) {

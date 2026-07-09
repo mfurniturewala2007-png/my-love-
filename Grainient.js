@@ -218,11 +218,12 @@ export function initGrainient(container, options = {}) {
     if (raf !== 0) { cancelAnimationFrame(raf); raf = 0; }
   };
 
+  const trigger = config.intersectionTrigger || container;
   const io = new IntersectionObserver(
     ([entry]) => { isVisible = entry.isIntersecting; isVisible ? tryStart() : tryStop(); },
     { threshold: 0 }
   );
-  io.observe(container);
+  io.observe(trigger);
 
   const onVisibility = () => {
     isPageVisible = !document.hidden;
