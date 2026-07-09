@@ -545,7 +545,7 @@ function unlockWebsite() {
     document.getElementById('main-content').style.display = 'block';
     document.getElementById('bg-flowers').style.display = 'block';
     document.getElementById('admin-controls').classList.add('active');
-    document.title = "Hussaina & Mohammed";
+    document.title = "Husaina & Mohammed";
     
     // Start animations and fetch data
     initAnimations();
