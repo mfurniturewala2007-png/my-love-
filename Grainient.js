@@ -141,7 +141,8 @@ export function initGrainient(container, options = {}) {
     webgl: 2,
     alpha: true,
     antialias: false,
-    dpr: Math.min(window.devicePixelRatio || 1, 2)
+    // Cap at 1.5x DPR — 2x is 4x the pixels to shade, brutal on mobile GPUs
+    dpr: Math.min(window.devicePixelRatio || 1, 1.5)
   });
 
   const gl = renderer.gl;
@@ -231,12 +232,34 @@ export function initGrainient(container, options = {}) {
 
   tryStart();
 
+  // Pause WebGL during scroll to let the compositor thread breathe
+  let scrollPauseTimer = null;
+  let isScrollPaused = false;
+
+  function pauseForScroll() {
+    if (!isScrollPaused) {
+      isScrollPaused = true;
+      tryStop();
+    }
+    clearTimeout(scrollPauseTimer);
+    scrollPauseTimer = setTimeout(() => {
+      isScrollPaused = false;
+      tryStart();
+    }, 150);
+  }
+
+  window.addEventListener('scroll', pauseForScroll, { passive: true });
+  window.addEventListener('touchmove', pauseForScroll, { passive: true });
+
   return {
     destroy: () => {
       tryStop();
       ro.disconnect();
       io.disconnect();
+      clearTimeout(scrollPauseTimer);
       document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('scroll', pauseForScroll);
+      window.removeEventListener('touchmove', pauseForScroll);
       try { container.removeChild(canvas); } catch { /* ignore */ }
     },
     updateOptions: (newOpts) => {

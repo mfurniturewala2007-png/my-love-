@@ -67,6 +67,10 @@ body {
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    /* Prevent overscroll bounce competing with scroll compositor */
+    overscroll-behavior-y: none;
+    /* Hint to browser: this element scrolls vertically */
+    touch-action: pan-y;
 }
 
 .brand-font {
@@ -143,7 +147,7 @@ body {
 .reveal {
     opacity: 0;
     transform: translateY(32px);
-    will-change: opacity, transform;
+    /* will-change removed: creates one compositor layer per section, wastes GPU memory on phones */
 }
 
 .reveal.visible {
@@ -230,8 +234,6 @@ body {
     -webkit-tap-highlight-color: transparent;
     filter: drop-shadow(0 0 15px rgba(255, 77, 77, 0.6));
     opacity: 0;
-    /* GPU composited layer */
-    will-change: opacity, transform;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
 }
@@ -365,7 +367,6 @@ body {
     max-width: 100%;
     overflow: hidden;
     -webkit-tap-highlight-color: transparent;
-    will-change: transform;
 }
 
 .song-box:hover {
@@ -650,9 +651,7 @@ body {
     transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
                 box-shadow 0.25s ease;
     -webkit-tap-highlight-color: transparent;
-    will-change: transform;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
+    /* No will-change here — too many compositor layers on mobile kills scroll perf */
 }
 
 .photo-card:hover {
@@ -688,13 +687,20 @@ body {
     display: block;
     position: relative;
     overflow: hidden;
+    /* Use opacity (GPU composited) instead of background-color (causes repaints) */
     animation: skeletonPulse 1.5s infinite ease-in-out;
 }
 
+/* Stop pulsing once image is loaded */
+.img-wrapper:has(img.loaded) {
+    animation: none;
+}
+
 @keyframes skeletonPulse {
-    0% { background-color: var(--bg-hover); }
-    50% { background-color: #f2e6e1; }
-    100% { background-color: var(--bg-hover); }
+    /* opacity is GPU-composited — no repaint, no jank */
+    0%   { opacity: 1; }
+    50%  { opacity: 0.6; }
+    100% { opacity: 1; }
 }
 
 .img-wrapper img {
@@ -704,7 +710,7 @@ body {
     border-radius: 12px;
     opacity: 0;
     transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    will-change: opacity, transform;
+    /* backface-visibility prevents Safari ghost rendering */
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
 }
