@@ -163,20 +163,12 @@ body {
     max-width: 100%;
 }
 
-.hero.visible h1 {
-    animation: dropIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
+/* CSS animations removed; handled by GSAP ScrollFloat */
 .hero p.quote {
     font-size: 1.5rem;
     color: var(--dark-rose);
     max-width: 600px;
     opacity: 0;
-}
-
-.hero.visible p.quote {
-    animation: swoopIn 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    animation-delay: 0.3s;
 }
 
 .timer-section {
@@ -1143,4 +1135,19 @@ footer {
     .time-box span {
         font-size: 1.5rem;
     }
+}
+
+/* --- ScrollFloat Component CSS --- */
+.scroll-float {
+    display: inline-block;
+    overflow: hidden;
+}
+
+.scroll-float-text {
+    display: inline-block;
+}
+
+.char {
+    display: inline-block;
+    transform-origin: 50% 0%;
 }

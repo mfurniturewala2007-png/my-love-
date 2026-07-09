@@ -1,6 +1,10 @@
 import './style.css'
 import { createClient } from '@supabase/supabase-js'
 import { initGrainient } from './Grainient.js'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger);
 
 // ==========================================
 // CONFIGURATION: SUPABASE CREDENTIALS
@@ -461,6 +465,82 @@ function initAnimations() {
     revealElements.forEach(el => observer.observe(el));
 }
 
+function initScrollFloats() {
+    const floatElements = document.querySelectorAll('.scroll-float');
+    
+    floatElements.forEach(el => {
+        const text = el.innerText.trim();
+        el.innerHTML = '';
+        
+        const textContainer = document.createElement('span');
+        textContainer.className = 'scroll-float-text';
+        
+        const chars = text.split('');
+        chars.forEach(char => {
+            const span = document.createElement('span');
+            span.className = 'char';
+            span.textContent = char === ' ' ? '\u00A0' : char;
+            textContainer.appendChild(span);
+        });
+        
+        el.appendChild(textContainer);
+        
+        const charElements = textContainer.querySelectorAll('.char');
+        
+        if (el.classList.contains('hero-heading')) {
+            gsap.fromTo(
+                charElements,
+                {
+                    willChange: 'opacity, transform',
+                    opacity: 0,
+                    yPercent: 120,
+                    scaleY: 2.3,
+                    scaleX: 0.7,
+                    transformOrigin: '50% 0%'
+                },
+                {
+                    duration: 1.2,
+                    ease: 'back.out(1.7)',
+                    opacity: 1,
+                    yPercent: 0,
+                    scaleY: 1,
+                    scaleX: 1,
+                    stagger: 0.03,
+                    delay: 0.2
+                }
+            );
+        } else {
+            gsap.fromTo(
+                charElements,
+                {
+                    willChange: 'opacity, transform',
+                    opacity: 0,
+                    yPercent: 120,
+                    scaleY: 2.3,
+                    scaleX: 0.7,
+                    transformOrigin: '50% 0%'
+                },
+                {
+                    duration: 1,
+                    ease: 'back.inOut(2)',
+                    opacity: 1,
+                    yPercent: 0,
+                    scaleY: 1,
+                    scaleX: 1,
+                    stagger: 0.02,
+                    scrollTrigger: {
+                        trigger: el,
+                        scroller: window,
+                        start: 'top bottom-=5%',
+                        end: 'bottom center+=10%',
+                        scrub: true
+                    }
+                }
+            );
+        }
+    });
+}
+
 // Start background WebGL immediately for the login page
 initGrainient(document.getElementById('grainient-bg'));
 
@@ -501,6 +581,7 @@ function unlockWebsite() {
     
     // Start animations and fetch data
     initAnimations();
+    initScrollFloats();
     fetchMemories();
     fetchSongHistory();
 }
