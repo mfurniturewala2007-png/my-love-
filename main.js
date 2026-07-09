@@ -193,16 +193,32 @@ const lightboxClose = document.getElementById('lightbox-close');
 
 window.openLightbox = function(imageUrl) {
     lightboxImg.src = imageUrl;
+    lightboxOverlay.classList.remove('closing');
     lightboxOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
-lightboxClose.addEventListener('click', () => {
-    lightboxOverlay.classList.remove('active');
-});
+function closeLightbox() {
+    lightboxOverlay.classList.add('closing');
+    setTimeout(() => {
+        lightboxOverlay.classList.remove('active', 'closing');
+        lightboxImg.src = '';
+        document.body.style.overflow = '';
+    }, 250);
+}
+
+lightboxClose.addEventListener('click', closeLightbox);
 
 lightboxOverlay.addEventListener('click', (e) => {
     if (e.target !== lightboxImg) {
-        lightboxOverlay.classList.remove('active');
+        closeLightbox();
+    }
+});
+
+// Escape key closes lightbox
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lightboxOverlay.classList.contains('active')) {
+        closeLightbox();
     }
 });
 
@@ -582,6 +598,7 @@ function unlockWebsite() {
     // Start animations and fetch data
     initAnimations();
     initScrollFloats();
+    initScrollExtras();
     fetchMemories();
     fetchSongHistory();
 }
@@ -765,11 +782,60 @@ async function fetchSongHistory() {
     renderHistory(document.getElementById('song-history-husaina'),  husainaHistory);
 }
 
-// Toggle History panel
+// Toggle History panel — smooth slide animation
 document.getElementById('btn-song-history').addEventListener('click', () => {
     const panel = document.getElementById('song-history-panel');
     const btn   = document.getElementById('btn-song-history');
-    const isHidden = panel.style.display === 'none';
-    panel.style.display = isHidden ? 'block' : 'none';
-    btn.textContent = isHidden ? '📖 Hide Song History' : '📖 View Song History';
+    const isOpen = panel.classList.contains('open');
+    if (isOpen) {
+        panel.classList.remove('open');
+        btn.textContent = '📖 View Song History';
+    } else {
+        panel.style.display = 'block';
+        // Force reflow so transition fires
+        panel.getBoundingClientRect();
+        panel.classList.add('open');
+        btn.textContent = '📖 Hide Song History';
+    }
 });
+
+// ==========================================
+// 6. SCROLL PROGRESS + SCROLL-TO-TOP
+// ==========================================
+function initScrollExtras() {
+    const progressBar = document.getElementById('scroll-progress');
+    const scrollBtn   = document.getElementById('scroll-to-top');
+
+    if (!progressBar || !scrollBtn) return;
+
+    let ticking = false;
+
+    function onScroll() {
+        if (!ticking) {
+            requestAnimationFrame(() => {
+                const scrollTop    = window.scrollY || document.documentElement.scrollTop;
+                const docHeight    = document.documentElement.scrollHeight - window.innerHeight;
+                const scrolled     = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+
+                // Update progress bar
+                progressBar.style.width = scrolled + '%';
+
+                // Show/hide scroll-to-top button (appears after 40% scroll)
+                if (scrolled > 40) {
+                    scrollBtn.classList.add('visible');
+                } else {
+                    scrollBtn.classList.remove('visible');
+                }
+
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    scrollBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
