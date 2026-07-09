@@ -635,19 +635,18 @@ body {
 }
 
 .photo-grid {
-    display: block;
-    columns: 3 220px;
-    column-gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    align-items: start;
     max-width: 1000px;
     width: 100%;
     margin: 0 auto;
 }
 
 .photo-card {
-    display: inline-block;
-    width: 100%;
-    margin-bottom: 16px;
-    break-inside: avoid;
+    display: flex;
+    flex-direction: column;
     padding: 0;
     background: transparent;
     border: none;
@@ -1256,13 +1255,12 @@ footer {
         padding: 1rem 0.5rem 6rem;
     }
     .photo-grid {
-        display: block;
-        columns: 2;
-        column-gap: 12px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
         padding: 0 4px;
     }
     .photo-card {
-        margin-bottom: 12px;
         /* Disable hover on touch; use active */
         transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
@@ -1408,8 +1406,8 @@ footer {
    ===================================================== */
 @media (min-width: 1024px) {
     .photo-grid {
-        columns: 3 240px;
-        column-gap: 20px;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 24px;
         max-width: 1100px;
     }
     .hero h1 {
