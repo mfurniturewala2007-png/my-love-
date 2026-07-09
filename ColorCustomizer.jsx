@@ -88,13 +88,13 @@ export default function ColorCustomizer({ supabase, onColorChange }) {
 
         if (error) {
           console.error('Error saving colors:', error)
-          setSaveStatus('Error saving changes')
+          setSaveStatus(`Save failed: ${error.message}`)
         } else {
           setSaveStatus('All changes saved to Supabase')
         }
       } catch (err) {
         console.error('Failed to save colors:', err)
-        setSaveStatus('Error saving changes')
+        setSaveStatus(`Save failed: ${err.message || err}`)
       }
     },
     [supabase, tableExists]
