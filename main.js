@@ -26,7 +26,7 @@ if (btnToggleEdit) {
     btnToggleEdit.addEventListener('click', () => {
         isAdmin = !isAdmin;
         if (isAdmin) {
-            btnToggleEdit.textContent = '👁️ View';
+            btnToggleEdit.textContent = '✕ Exit Edit';
             btnToggleEdit.classList.add('active-edit');
             if (btnAddMemory) btnAddMemory.style.display = 'inline-block';
             document.body.classList.add('admin-active');
